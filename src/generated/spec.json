@@ -1,0 +1,419 @@
+{
+  "components": {
+    "WalletScreen": {
+      "signature": "WalletScreen(title: string, activeTab: \"overview\" | \"send\" | \"receive\" | \"assets\" | \"activity\" | \"explore\", sections: any[])",
+      "description": "Root container for the X Wallet desktop canvas. Composes child sections into a cohesive wallet view."
+    },
+    "BalanceHero": {
+      "signature": "BalanceHero(accountId: string, balanceKey: string, fiatCurrency: string, networkLabel: string, actions: string[])",
+      "description": "Displays the main account card with total balance, Stellar testnet badge, and action buttons."
+    },
+    "AssetList": {
+      "signature": "AssetList(assets: string[], showSearch?: boolean)",
+      "description": "Displays the list of held and tracked Stellar assets (XLM, USDC, AQUA, etc.)."
+    },
+    "AssetRow": {
+      "signature": "AssetRow(assetId: string, emphasis?: boolean)",
+      "description": "Single asset row showing balance, fiat value, icon, and 24h change."
+    },
+    "ActionGroup": {
+      "signature": "ActionGroup(actions: \"send\" | \"receive\" | \"add\" | \"swap\" | \"history\"[])",
+      "description": "Row of quick action buttons for Send, Receive, Add Asset, and Explore."
+    },
+    "WalletMethodList": {
+      "signature": "WalletMethodList(title: string, methods: string[])",
+      "description": "Presents selectable payment/transfer options inspired by Telegram Wallet's choice screens."
+    },
+    "SendFlow": {
+      "signature": "SendFlow(step: \"recipient\" | \"amount\" | \"review\" | \"receipt\", selectedAssetId: string, recipientRef?: string, amount?: string)",
+      "description": "Interactive 3-step Send flow: Recipient entry -> Amount selection -> Review & Demo confirmation."
+    },
+    "ReceivePanel": {
+      "signature": "ReceivePanel(assetId: string, addressKey: string, showQr?: boolean)",
+      "description": "Displays the public Stellar address for receiving payments, with QR code and Copy Address button."
+    },
+    "TransactionList": {
+      "signature": "TransactionList(filter: \"all\" | \"sent\" | \"received\", transactions?: string[])",
+      "description": "Activity feed showing recent Stellar payments with filter tabs (All, Sent, Received)."
+    },
+    "TransactionDetail": {
+      "signature": "TransactionDetail(transactionId: string)",
+      "description": "Detailed view of an individual transaction showing hash, ledger, fee, and status."
+    },
+    "AddAssetPanel": {
+      "signature": "AddAssetPanel(query?: string, assets: string[])",
+      "description": "Curated asset catalog to search, discover, and add Stellar asset trustlines to the watchlist."
+    },
+    "ConnectedApps": {
+      "signature": "ConnectedApps(apps: string[])",
+      "description": "Curated directory of Stellar ecosystem apps, smart contracts, and tools."
+    },
+    "Notice": {
+      "signature": "Notice(tone: \"info\" | \"warning\" | \"success\" | \"danger\", title: string, description: string)",
+      "description": "Contextual demo badge or disclaimer informing the user of simulated testnet mode."
+    }
+  },
+  "schema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "WalletScreen": {
+        "$ref": "#/$defs/WalletScreen"
+      },
+      "BalanceHero": {
+        "$ref": "#/$defs/BalanceHero"
+      },
+      "AssetList": {
+        "$ref": "#/$defs/AssetList"
+      },
+      "AssetRow": {
+        "$ref": "#/$defs/AssetRow"
+      },
+      "ActionGroup": {
+        "$ref": "#/$defs/ActionGroup"
+      },
+      "WalletMethodList": {
+        "$ref": "#/$defs/WalletMethodList"
+      },
+      "SendFlow": {
+        "$ref": "#/$defs/SendFlow"
+      },
+      "ReceivePanel": {
+        "$ref": "#/$defs/ReceivePanel"
+      },
+      "TransactionList": {
+        "$ref": "#/$defs/TransactionList"
+      },
+      "TransactionDetail": {
+        "$ref": "#/$defs/TransactionDetail"
+      },
+      "AddAssetPanel": {
+        "$ref": "#/$defs/AddAssetPanel"
+      },
+      "ConnectedApps": {
+        "$ref": "#/$defs/ConnectedApps"
+      },
+      "Notice": {
+        "$ref": "#/$defs/Notice"
+      }
+    },
+    "required": [
+      "WalletScreen",
+      "BalanceHero",
+      "AssetList",
+      "AssetRow",
+      "ActionGroup",
+      "WalletMethodList",
+      "SendFlow",
+      "ReceivePanel",
+      "TransactionList",
+      "TransactionDetail",
+      "AddAssetPanel",
+      "ConnectedApps",
+      "Notice"
+    ],
+    "additionalProperties": false,
+    "$defs": {
+      "WalletScreen": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "activeTab": {
+            "type": "string",
+            "enum": [
+              "overview",
+              "send",
+              "receive",
+              "assets",
+              "activity",
+              "explore"
+            ]
+          },
+          "sections": {
+            "type": "array",
+            "items": {}
+          }
+        },
+        "required": [
+          "title",
+          "activeTab",
+          "sections"
+        ],
+        "additionalProperties": false,
+        "description": "Root container for the X Wallet desktop canvas. Composes child sections into a cohesive wallet view."
+      },
+      "BalanceHero": {
+        "type": "object",
+        "properties": {
+          "accountId": {
+            "type": "string"
+          },
+          "balanceKey": {
+            "type": "string"
+          },
+          "fiatCurrency": {
+            "type": "string"
+          },
+          "networkLabel": {
+            "type": "string"
+          },
+          "actions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "accountId",
+          "balanceKey",
+          "fiatCurrency",
+          "networkLabel",
+          "actions"
+        ],
+        "additionalProperties": false,
+        "description": "Displays the main account card with total balance, Stellar testnet badge, and action buttons."
+      },
+      "AssetList": {
+        "type": "object",
+        "properties": {
+          "assets": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "showSearch": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "assets"
+        ],
+        "additionalProperties": false,
+        "description": "Displays the list of held and tracked Stellar assets (XLM, USDC, AQUA, etc.)."
+      },
+      "AssetRow": {
+        "type": "object",
+        "properties": {
+          "assetId": {
+            "type": "string"
+          },
+          "emphasis": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "assetId"
+        ],
+        "additionalProperties": false,
+        "description": "Single asset row showing balance, fiat value, icon, and 24h change."
+      },
+      "ActionGroup": {
+        "type": "object",
+        "properties": {
+          "actions": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "send",
+                "receive",
+                "add",
+                "swap",
+                "history"
+              ]
+            }
+          }
+        },
+        "required": [
+          "actions"
+        ],
+        "additionalProperties": false,
+        "description": "Row of quick action buttons for Send, Receive, Add Asset, and Explore."
+      },
+      "WalletMethodList": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "methods": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "title",
+          "methods"
+        ],
+        "additionalProperties": false,
+        "description": "Presents selectable payment/transfer options inspired by Telegram Wallet's choice screens."
+      },
+      "SendFlow": {
+        "type": "object",
+        "properties": {
+          "step": {
+            "type": "string",
+            "enum": [
+              "recipient",
+              "amount",
+              "review",
+              "receipt"
+            ]
+          },
+          "selectedAssetId": {
+            "type": "string"
+          },
+          "recipientRef": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "step",
+          "selectedAssetId"
+        ],
+        "additionalProperties": false,
+        "description": "Interactive 3-step Send flow: Recipient entry -> Amount selection -> Review & Demo confirmation."
+      },
+      "ReceivePanel": {
+        "type": "object",
+        "properties": {
+          "assetId": {
+            "type": "string"
+          },
+          "addressKey": {
+            "type": "string"
+          },
+          "showQr": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "assetId",
+          "addressKey"
+        ],
+        "additionalProperties": false,
+        "description": "Displays the public Stellar address for receiving payments, with QR code and Copy Address button."
+      },
+      "TransactionList": {
+        "type": "object",
+        "properties": {
+          "filter": {
+            "type": "string",
+            "enum": [
+              "all",
+              "sent",
+              "received"
+            ]
+          },
+          "transactions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "filter"
+        ],
+        "additionalProperties": false,
+        "description": "Activity feed showing recent Stellar payments with filter tabs (All, Sent, Received)."
+      },
+      "TransactionDetail": {
+        "type": "object",
+        "properties": {
+          "transactionId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "transactionId"
+        ],
+        "additionalProperties": false,
+        "description": "Detailed view of an individual transaction showing hash, ledger, fee, and status."
+      },
+      "AddAssetPanel": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string"
+          },
+          "assets": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "assets"
+        ],
+        "additionalProperties": false,
+        "description": "Curated asset catalog to search, discover, and add Stellar asset trustlines to the watchlist."
+      },
+      "ConnectedApps": {
+        "type": "object",
+        "properties": {
+          "apps": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "apps"
+        ],
+        "additionalProperties": false,
+        "description": "Curated directory of Stellar ecosystem apps, smart contracts, and tools."
+      },
+      "Notice": {
+        "type": "object",
+        "properties": {
+          "tone": {
+            "type": "string",
+            "enum": [
+              "info",
+              "warning",
+              "success",
+              "danger"
+            ]
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "tone",
+          "title",
+          "description"
+        ],
+        "additionalProperties": false,
+        "description": "Contextual demo badge or disclaimer informing the user of simulated testnet mode."
+      }
+    }
+  },
+  "promptOptions": {
+    "preamble": "You are X Wallet, an intelligent desktop self-custodial wallet assistant for the Stellar network. You compose polished, high-contrast desktop wallet screens using OpenUI Lang. Every UI hierarchy starts with `root = WalletScreen(...)`.",
+    "additionalRules": [
+      "Always set root = WalletScreen(title, activeTab, [sections]).",
+      "For the wallet overview: compose BalanceHero, AssetList, TransactionList, and optionally ConnectedApps.",
+      "For sending funds: compose SendFlow with the asset and destination, or WalletMethodList.",
+      "For receiving funds: compose ReceivePanel with the public Stellar address.",
+      "For activity/history: compose TransactionList with filter ('all', 'sent', or 'received').",
+      "Use Stellar native assets: XLM, USDC, AQUA, EURC.",
+      "All values are deterministic testnet fixtures; never claim real money is moving."
+    ]
+  }
+}

@@ -4,6 +4,14 @@ This is an [OpenUI](https://openui.com) Cloud project bootstrapped with [`openui
 
 This project is built with [OpenUI](https://www.openui.com). Before changing it, read [AGENTS.md](AGENTS.md), the OpenUI guide for coding agents.
 
+## Editorial Todo Planner
+
+A bespoke daily productivity planner built with Next.js and OpenUI (OUI-1):
+- **Magazine Aesthetic**: Grand Timeless Serif typography paired with handwritten accents for daily routines.
+- **Drawably Hand-Drawn Elements**: Interactive highlights, underlines, and circles.
+- **Dynamic Task Management**: Inline task additions with priority status badges (`priority` and `not priority`).
+- **Progressive Streaming**: Low-latency token-level streaming cadence for real-time generative UI.
+
 ## Setup
 
 The CLI writes `.env` for you. If you cloned the generated project elsewhere,

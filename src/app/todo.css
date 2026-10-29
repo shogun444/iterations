@@ -1,0 +1,479 @@
+/* Editorial Todo Styling - Inspired by Timeless / Trip Planner */
+@import "../drawably/style.css";
+
+:root {
+  --todo-coral: #ff5364;
+  --todo-emerald: #10b980;
+  --todo-amber: #feb600;
+  --todo-indigo: #6366f1;
+  --todo-canvas: #ffffff;
+  --todo-surface: #ffffff;
+  --todo-line: #e5e7eb;
+  --todo-ink: #111827;
+  --todo-ink-secondary: #4b5563;
+  --todo-note-neutral: #4b5563;
+}
+
+/* Light mode defaults: pure white canvas and clean paper surface */
+html,
+body,
+.openui-agent-interface,
+.openui-agent-interface[data-theme="light"],
+[data-openui-theme="light"],
+.openui-agent-container,
+.openui-agent-thread-container,
+.openui-agent-messages-container {
+  background-color: #ffffff !important;
+  color: var(--todo-ink) !important;
+}
+
+/* Dark mode ONLY when explicitly applied */
+[data-openui-theme="dark"],
+.openui-agent-interface[data-theme="dark"],
+[data-theme="dark"],
+.dark {
+  --todo-canvas: #111215;
+  --todo-surface: #1a1b1f;
+  --todo-line: #2b2e35;
+  --todo-ink: #f3f4f6;
+  --todo-ink-secondary: #9ea3ae;
+  --todo-note-neutral: #9ca3af;
+}
+
+[data-openui-theme="dark"] body,
+[data-openui-theme="dark"] .openui-agent-interface,
+[data-openui-theme="dark"] .openui-agent-container,
+[data-openui-theme="dark"] .openui-agent-thread-container,
+.openui-agent-interface[data-theme="dark"],
+.openui-agent-interface[data-theme="dark"] .openui-agent-container,
+.openui-agent-interface[data-theme="dark"] .openui-agent-thread-container {
+  background-color: #111215 !important;
+  color: var(--todo-ink) !important;
+}
+
+/* AgentInterface root restyle */
+.openui-agent-interface,
+[data-openui-chat] {
+  font-family: var(--font-display), "Timeless Serif", Georgia, serif !important;
+}
+
+/* Make messages look like magazine spreads */
+.todo-board-container {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  width: 100%;
+  max-width: 820px;
+  margin: 0 auto;
+  color: var(--todo-ink);
+  padding: 12px 0 36px;
+}
+
+/* 1. Daily Headline */
+.todo-headline {
+  margin: 0;
+  font-family: var(--font-display), "Timeless Serif", Georgia, serif;
+  font-size: clamp(34px, 5.2vw, 52px);
+  font-weight: 380;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+  color: var(--todo-ink);
+}
+
+/* 2. Focus Pull — Open editorial statement, NOT a card */
+.todo-focus-pull {
+  position: relative;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  margin: -6px 0 2px;
+}
+
+.todo-focus-text {
+  margin: 0;
+  font-family: var(--font-hand), cursive;
+  font-size: 26px;
+  line-height: 1.2;
+  letter-spacing: 0.01em;
+  color: var(--todo-ink);
+  text-wrap: balance;
+}
+
+.todo-hand-note {
+  display: inline-block;
+  margin-top: 8px;
+  font-family: var(--font-hand), cursive;
+  font-size: 26px;
+  line-height: 1;
+  color: var(--todo-note-neutral);
+  rotate: -2deg;
+}
+
+/* 3. Section Heading */
+.todo-heading {
+  margin: 12px 0 -8px;
+  font-family: var(--font-display), "Timeless Serif", Georgia, serif;
+  font-size: 24px;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  color: var(--todo-ink);
+}
+
+/* 4. Task Cards Grid */
+.todo-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+/* Physical floating card with subtle tilt */
+.todo-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 150px;
+  padding: 20px;
+  background: var(--todo-surface);
+  border: 1px solid var(--todo-line);
+  border-radius: 16px;
+  box-shadow: 0 8px 24px -10px rgba(0, 0, 0, 0.08);
+  rotate: var(--tilt, 0deg);
+  transition: transform 380ms cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 380ms ease, rotate 380ms ease;
+  cursor: pointer;
+  color: var(--todo-ink);
+}
+
+.todo-card:hover {
+  rotate: 0deg !important;
+  transform: translateY(-4px);
+  box-shadow: 0 14px 30px -10px rgba(0, 0, 0, 0.16);
+}
+
+.todo-card.is-done {
+  opacity: 0.5;
+  background: rgba(125, 125, 125, 0.05);
+}
+
+.todo-card.is-done .todo-card-title {
+  text-decoration: line-through;
+  color: var(--todo-ink-secondary);
+}
+
+.todo-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.todo-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 9px;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: lowercase;
+  letter-spacing: 0.04em;
+  font-family: var(--font-display), "Timeless Serif", Georgia, serif;
+}
+
+.todo-badge--priority,
+.todo-badge--urgent,
+.todo-badge--high {
+  background: rgba(234, 88, 12, 0.1);
+  color: #c2410c;
+  border: 1px solid rgba(234, 88, 12, 0.22);
+}
+
+.todo-badge--not-priority,
+.todo-badge--normal,
+.todo-badge--low {
+  background: rgba(107, 114, 128, 0.09);
+  color: #4b5563;
+  border: 1px solid rgba(107, 114, 128, 0.18);
+}
+
+.todo-card-tag {
+  font-size: 12px;
+  color: var(--todo-ink-secondary);
+  font-weight: 500;
+  font-family: var(--font-display), "Timeless Serif", Georgia, serif;
+}
+
+.todo-card-title {
+  margin: 0 0 12px;
+  font-family: var(--font-display), "Timeless Serif", Georgia, serif;
+  font-size: 20px;
+  line-height: 1.28;
+  color: var(--todo-ink);
+}
+
+.todo-card-bottom {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: auto;
+}
+
+.todo-card-due {
+  font-size: 13px;
+  color: var(--todo-ink-secondary);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-display), "Timeless Serif", Georgia, serif;
+}
+
+.todo-card-note {
+  font-family: var(--font-hand), cursive;
+  font-size: 24px;
+  line-height: 1;
+  color: var(--todo-note-neutral);
+  rotate: -2deg;
+}
+
+/* 5. Task List */
+.todo-tasklist {
+  background: var(--todo-surface);
+  border: 1px solid var(--todo-line);
+  border-radius: 16px;
+  padding: 18px 22px;
+  box-shadow: 0 4px 18px -8px rgba(0, 0, 0, 0.05);
+  color: var(--todo-ink);
+}
+
+.todo-tasklist-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--todo-line);
+  margin-bottom: 8px;
+}
+
+.todo-tasklist-title {
+  margin: 0;
+  font-family: var(--font-display), "Timeless Serif", Georgia, serif;
+  font-size: clamp(22px, 3.2vw, 28px);
+  font-weight: 380;
+  letter-spacing: -0.025em;
+  color: var(--todo-ink);
+}
+
+.todo-tasklist-items {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.todo-tasklist-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 8px;
+  border-radius: 8px;
+  transition: background 180ms ease;
+  cursor: pointer;
+}
+
+.todo-tasklist-item:hover {
+  background: rgba(125, 125, 125, 0.05);
+}
+
+.todo-tasklist-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.todo-checkbox {
+  width: 19px;
+  height: 19px;
+  border-radius: 5px;
+  border: 1.5px solid var(--todo-line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 180ms ease;
+  flex-shrink: 0;
+  background: var(--todo-surface);
+}
+
+.todo-checkbox.checked {
+  background: var(--todo-ink);
+  border-color: var(--todo-ink);
+  color: var(--todo-surface);
+}
+
+/* Handwritten font used for all todo items, matching the notes */
+.todo-tasklist-title-text {
+  font-family: var(--font-hand), cursive;
+  font-size: 25px;
+  line-height: 1.1;
+  color: var(--todo-ink);
+  transition: color 180ms ease, opacity 180ms ease;
+  letter-spacing: 0.01em;
+}
+
+.todo-tasklist-item.is-done .todo-tasklist-title-text {
+  text-decoration: line-through;
+  opacity: 0.45;
+}
+
+.todo-tasklist-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.todo-tasklist-note {
+  font-family: var(--font-hand), cursive;
+  font-size: 22px;
+  line-height: 1;
+  color: var(--todo-note-neutral);
+}
+
+/* Add Todo Input Row */
+.todo-tasklist-add {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+  padding: 10px 8px 4px;
+  border-top: 1px dashed var(--todo-line);
+  background: transparent;
+}
+
+.todo-tasklist-add-icon {
+  color: var(--todo-ink-secondary);
+  flex-shrink: 0;
+}
+
+.todo-tasklist-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: var(--font-display), "Timeless Serif", Georgia, serif !important;
+  font-size: 18px;
+  font-weight: 400;
+  letter-spacing: -0.015em;
+  color: var(--todo-ink);
+}
+
+.todo-tasklist-input::placeholder {
+  color: var(--todo-ink-secondary);
+  font-family: var(--font-display), "Timeless Serif", Georgia, serif !important;
+  font-size: 17px;
+  font-weight: 400;
+  letter-spacing: -0.015em;
+  opacity: 0.65;
+}
+
+.todo-tasklist-add-btn {
+  padding: 4px 14px;
+  border-radius: 9999px;
+  background: var(--todo-ink);
+  color: var(--todo-surface);
+  font-size: 13px;
+  font-family: var(--font-display), "Timeless Serif", Georgia, serif;
+  border: none;
+  cursor: pointer;
+  transition: opacity 160ms ease;
+}
+
+.todo-tasklist-add-btn:hover {
+  opacity: 0.85;
+}
+
+/* 6. Stats Row */
+.todo-stats-row {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.todo-stat-card {
+  flex: 1;
+  min-width: 140px;
+  padding: 14px 18px;
+  background: var(--todo-surface);
+  border: 1px solid var(--todo-line);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  color: var(--todo-ink);
+}
+
+.todo-stat-label {
+  font-size: 12px;
+  color: var(--todo-ink-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 500;
+  font-family: var(--font-display), "Timeless Serif", Georgia, serif;
+}
+
+.todo-stat-value {
+  font-family: var(--font-display), "Timeless Serif", Georgia, serif;
+  font-size: 28px;
+  font-weight: 400;
+  margin: 4px 0;
+  color: var(--todo-ink);
+}
+
+.todo-stat-note {
+  font-family: var(--font-hand), cursive;
+  font-size: 22px;
+  line-height: 1;
+  color: var(--todo-note-neutral);
+}
+
+/* 7. Question & Followups */
+.todo-question-box {
+  background: var(--todo-surface);
+  border: 1px solid var(--todo-line);
+  border-radius: 16px;
+  padding: 20px;
+  color: var(--todo-ink);
+}
+
+.todo-question-text {
+  margin: 0 0 14px;
+  font-family: var(--font-display), "Timeless Serif", Georgia, serif;
+  font-size: 22px;
+  color: var(--todo-ink);
+}
+
+.todo-options-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.todo-option-pill {
+  padding: 8px 16px;
+  border-radius: 9999px;
+  background: var(--todo-surface);
+  border: 1px solid var(--todo-line);
+  font-size: 14px;
+  color: var(--todo-ink);
+  font-family: var(--font-display), "Timeless Serif", Georgia, serif;
+  cursor: pointer;
+  box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.05);
+  transition: all 180ms ease;
+}
+
+.todo-option-pill:hover {
+  border-color: var(--todo-ink);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.12);
+}

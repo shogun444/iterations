@@ -1,16 +1,12 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { appFontVariables } from "@/design-system/fonts";
+import { tokensCss } from "@/design-system/tokens";
 import "./globals.css";
-
-// Variable Inter (no fixed weights), so the theme's in-between Medium (560)
-// renders as set.
-const inter = Inter({
-  subsets: ["latin"],
-});
+import "./todo.css";
 
 export const metadata: Metadata = {
-  title: "OpenUI",
-  description: "Managed OpenUI Cloud Chat with web and image search tools",
+  title: "Editorial Todo — Powered by OUI-1",
+  description: "Magazine-grade task planner and generative todo board powered by OUI-1",
 };
 
 export default function RootLayout({
@@ -19,8 +15,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>{children}</body>
+    <html lang="en" suppressHydrationWarning className={appFontVariables}>
+      <head>
+        <style dangerouslySetInnerHTML={{ __html: tokensCss(":root") }} />
+      </head>
+      <body className="antialiased">{children}</body>
     </html>
   );
 }

@@ -1,86 +1,59 @@
-/**
- * Design Tokens for X Wallet (Stellar Desktop Web)
- * Adheres to Section 7 of X_Wallet_Stellar_OpenUI_PRD.docx
- */
-
-export const tokens = {
-  color: {
-    canvas: "#F5F7FB",
-    surface: "#FFFFFF",
-    surfaceSubtle: "#EEF2F7",
-    border: "#DCE3ED",
-    borderStrong: "#C7D2E1",
-    ink: "#101828",
-    inkSecondary: "#475467",
-    inkMuted: "#667085",
-    stellarNavy: "#0B1020",
-    stellarBlue: "#1677FF",
-    stellarCyan: "#36C5F0",
-    stellarBlueSoft: "#E8F2FF",
-    success: "#168A5B",
-    warning: "#B76E00",
-    danger: "#D92D20",
-    info: "#1D6FE8",
-  },
-  gradient: {
-    balance: "linear-gradient(125deg, #0B3A74 0%, #1677FF 54%, #36C5F0 100%)",
-    selected: "linear-gradient(135deg, rgba(22, 119, 255, 0.12), rgba(54, 197, 240, 0.10))",
-    cardGlow: "radial-gradient(ellipse at top right, rgba(54, 197, 240, 0.25), transparent 70%)",
-  },
-  spacing: {
-    xs: "4px",
-    sm: "8px",
-    md: "12px",
-    base: "16px",
-    lg: "20px",
-    xl: "24px",
-    "2xl": "32px",
-    "3xl": "40px",
-    "4xl": "48px",
-    "5xl": "64px",
-  },
-  radius: {
-    sm: "8px",
-    md: "12px",
-    lg: "16px",
-    xl: "20px",
-    "2xl": "24px",
-    pill: "9999px",
-  },
-  elevation: {
-    flat: "0 1px 2px rgba(16, 24, 40, 0.04)",
-    card: "0 4px 14px rgba(16, 24, 40, 0.06)",
-    overlay: "0 16px 48px rgba(16, 24, 40, 0.16)",
-  },
-  font: {
-    family:
-      'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
-  },
+export const neutral = {
+  0: "#ffffff",
+  50: "#f8f9fa",
+  100: "#f1f2f3",
+  200: "#e7e9eb",
+  300: "#dcdfe2",
+  400: "#afb3b8",
+  500: "#81858b",
+  600: "#5f6369",
+  700: "#4a4d52",
+  800: "#2c2e31",
+  900: "#121314",
+  950: "#000000",
 } as const;
 
-/** Converts token definitions to CSS variables string for injection into globals.css or root */
-export function getTokensCssVariables(): string {
+export const accent = {
+  coral: "#ff5364",
+  coralSoft: "#fff0f1",
+  emerald: "#10b980",
+  emeraldSoft: "#ecfdf5",
+  amber: "#feb600",
+  amberSoft: "#fffbeb",
+  indigo: "#6366f1",
+  indigoSoft: "#eef2ff",
+} as const;
+
+export const color = {
+  canvas: neutral[100],
+  surface: neutral[0],
+  surfaceSunken: neutral[50],
+  line: neutral[300],
+  lineSoft: neutral[200],
+  ink: neutral[900],
+  inkSecondary: neutral[600],
+  inkMuted: neutral[400],
+} as const;
+
+export function tokensCss(scope = ":root") {
   return `
-  --xw-canvas: ${tokens.color.canvas};
-  --xw-surface: ${tokens.color.surface};
-  --xw-surface-subtle: ${tokens.color.surfaceSubtle};
-  --xw-border: ${tokens.color.border};
-  --xw-border-strong: ${tokens.color.borderStrong};
-  --xw-ink: ${tokens.color.ink};
-  --xw-ink-secondary: ${tokens.color.inkSecondary};
-  --xw-ink-muted: ${tokens.color.inkMuted};
-  --xw-stellar-navy: ${tokens.color.stellarNavy};
-  --xw-stellar-blue: ${tokens.color.stellarBlue};
-  --xw-stellar-cyan: ${tokens.color.stellarCyan};
-  --xw-stellar-blue-soft: ${tokens.color.stellarBlueSoft};
-  --xw-success: ${tokens.color.success};
-  --xw-warning: ${tokens.color.warning};
-  --xw-danger: ${tokens.color.danger};
-  --xw-info: ${tokens.color.info};
-  --xw-gradient-balance: ${tokens.gradient.balance};
-  --xw-gradient-selected: ${tokens.gradient.selected};
-  --xw-card-shadow: ${tokens.elevation.card};
-  --xw-overlay-shadow: ${tokens.elevation.overlay};
+    ${scope} {
+      --ds-canvas: ${color.canvas};
+      --ds-surface: ${color.surface};
+      --ds-surface-sunken: ${color.surfaceSunken};
+      --ds-line: ${color.line};
+      --ds-line-soft: ${color.lineSoft};
+      --ds-ink: ${color.ink};
+      --ds-ink-secondary: ${color.inkSecondary};
+      --ds-ink-muted: ${color.inkMuted};
+      --ds-accent-coral: ${accent.coral};
+      --ds-accent-emerald: ${accent.emerald};
+      --ds-accent-amber: ${accent.amber};
+      --ds-accent-indigo: ${accent.indigo};
+      --font-display-var: var(--font-display, "Timeless Serif", Georgia, serif);
+      --font-ui-var: var(--font-ui, "Timeless Sans", system-ui, sans-serif);
+      --font-hand-var: var(--font-hand, cursive);
+    }
   `;
 }
 

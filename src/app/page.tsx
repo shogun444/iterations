@@ -1,8 +1,9 @@
 import "@openuidev/react-ui/styles/index.css";
-import { AppShell } from "@/components/app-shell";
+
+import CloudChat from "@/components/cloud-chat";
 
 export const dynamic = "force-dynamic";
 
 export default function Page() {
-  return <AppShell />;
+  return <CloudChat />;
 }

@@ -1,108 +1,53 @@
 "use client";
 
-import { useMemo, useRef } from "react";
+import { useEffect } from "react";
 import { OpenUIWordmark } from "@/components/openui-wordmark";
 import { usePersistedModel } from "@/hooks/use-persisted-model";
-import { createLocalStorageChatStorage, saveStoredLocalMessages } from "@/lib/local-storage";
-import { isLocalModel, MODEL_OPTIONS } from "@/lib/models";
+import { LocalStorageMessageSync, useLocalThreadStorage } from "@/hooks/use-local-storage";
+import { MODEL_OPTIONS } from "@/lib/models";
 import { OPENUI_LOGO, STARTERS } from "@/lib/starters";
-import type { AssistantMessage, ChatLLM, Message } from "@openuidev/react-headless";
+import { todoLibrary } from "@/lib/todo-library";
 import {
   AgentInterface,
   fetchLLM,
-  langGraphAdapter,
-  langGraphMessageFormat,
   ModelSwitcher,
-  openuiLibrary,
-  useOpenuiCloudStorage,
   useThemeModePreference,
+  vercelAIAdapter,
+  vercelAIMessageFormat,
   WelcomeMascot,
 } from "@openuidev/react-ui";
 
 export default function CloudChat() {
-  // Follows the system theme until the footer toggle is first used, then
-  // remembers the choice.
   const { setPreference, mode } = useThemeModePreference();
   const [selectedModel, setSelectedModel] = usePersistedModel();
-  const isLocal = isLocalModel(selectedModel);
 
-  const activeThreadRef = useRef<{ threadId: string; messages: Message[] }>({
-    threadId: "",
-    messages: [],
+  // Default to light mode for the magazine editorial aesthetic if unset
+  useEffect(() => {
+    if (typeof window !== "undefined" && !localStorage.getItem("openui-theme-mode")) {
+      setPreference("light");
+    }
+  }, [setPreference]);
+
+  const llm = fetchLLM({
+    url: "/api/chat",
+    streamAdapter: vercelAIAdapter(),
+    messageFormat: vercelAIMessageFormat,
+    body: { model: selectedModel },
   });
 
-  // The /api/chat route runs the LangGraph agent in-process and streams its
-  // native `messages`-mode SSE. Outgoing messages are converted to LangChain
-  // shape here so the route can pass them to the graph as-is.
-  const baseLLM = useMemo(
-    () =>
-      fetchLLM({
-        url: "/api/chat",
-        streamAdapter: langGraphAdapter(),
-        messageFormat: langGraphMessageFormat,
-        body: { model: selectedModel },
-      }),
-    [selectedModel],
-  );
-
-  const llm = useMemo<ChatLLM>(() => {
-    if (!isLocal) return baseLLM;
-
-    return {
-      async send(params) {
-        activeThreadRef.current = {
-          threadId: params.threadId,
-          messages: params.messages,
-        };
-        return baseLLM.send(params);
-      },
-      streamProtocol: {
-        async *parse(response: Response) {
-          let accumulatedText = "";
-          let messageId = crypto.randomUUID();
-
-          for await (const event of baseLLM.streamProtocol.parse(response)) {
-            if (event.type === "TEXT_MESSAGE_START" && event.messageId) {
-              messageId = event.messageId;
-            }
-            if (event.type === "TEXT_MESSAGE_CONTENT" && event.delta) {
-              accumulatedText += event.delta;
-            }
-            yield event;
-          }
-
-          const { threadId, messages } = activeThreadRef.current;
-          if (threadId && accumulatedText) {
-            const assistantMsg: AssistantMessage = {
-              id: messageId,
-              role: "assistant",
-              content: accumulatedText,
-            };
-            saveStoredLocalMessages(threadId, [...messages, assistantMsg]);
-          }
-        },
-      },
-    };
-  }, [baseLLM, isLocal]);
-
-  const localStorage = useMemo(() => createLocalStorageChatStorage(), []);
-  const cloudStorage = useOpenuiCloudStorage({
-    token: "/api/frontend-token",
-    apiBaseUrl: "https://api.thesys.dev",
-    features: { artifact: false },
-  });
-
-  const storage = isLocal ? localStorage : cloudStorage;
+  // Pure local thread storage that preserves all threads and messages in localStorage without cloud 401s
+  const storage = useLocalThreadStorage();
 
   return (
     <AgentInterface
       storage={storage}
       llm={llm}
-      componentLibrary={openuiLibrary}
+      componentLibrary={todoLibrary}
       logoUrl={OPENUI_LOGO}
       theme={{ mode }}
       starters={STARTERS}
     >
+      <LocalStorageMessageSync />
       <AgentInterface.SidebarHeader agentName={<OpenUIWordmark mode={mode} />} />
       <AgentInterface.SidebarFooter>
         <AgentInterface.ThemeModeToggle mode={mode} onModeChange={setPreference} />
@@ -129,7 +74,7 @@ export default function CloudChat() {
       />
       <AgentInterface.Welcome
         image={<WelcomeMascot />}
-        title="What's on your mind today?"
+        title="What's your focus for today?"
         starterVariant="card"
         glowAnimation
       />

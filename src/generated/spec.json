@@ -1,419 +1,423 @@
 {
+  "root": "TodoBoard",
   "components": {
-    "WalletScreen": {
-      "signature": "WalletScreen(title: string, activeTab: \"overview\" | \"send\" | \"receive\" | \"assets\" | \"activity\" | \"explore\", sections: any[])",
-      "description": "Root container for the X Wallet desktop canvas. Composes child sections into a cohesive wallet view."
+    "TodoBoard": {
+      "signature": "TodoBoard(blocks: (DailyHeadline | FocusPull | Heading | TaskCards | TaskList | StatsRow | Question | FollowUps)[])",
+      "description": "The root container: one todo board reply."
     },
-    "BalanceHero": {
-      "signature": "BalanceHero(accountId: string, balanceKey: string, fiatCurrency: string, networkLabel: string, actions: string[])",
-      "description": "Displays the main account card with total balance, Stellar testnet badge, and action buttons."
+    "DailyHeadline": {
+      "signature": "DailyHeadline(text: string)",
+      "description": "A grand editorial headline that opens the board."
     },
-    "AssetList": {
-      "signature": "AssetList(assets: string[], showSearch?: boolean)",
-      "description": "Displays the list of held and tracked Stellar assets (XLM, USDC, AQUA, etc.)."
+    "FocusPull": {
+      "signature": "FocusPull(text: string, note?: string)",
+      "description": "A pull-quote defining the day's singular focus."
     },
-    "AssetRow": {
-      "signature": "AssetRow(assetId: string, emphasis?: boolean)",
-      "description": "Single asset row showing balance, fiat value, icon, and 24h change."
+    "Heading": {
+      "signature": "Heading(text: string)",
+      "description": "A section heading."
     },
-    "ActionGroup": {
-      "signature": "ActionGroup(actions: \"send\" | \"receive\" | \"add\" | \"swap\" | \"history\"[])",
-      "description": "Row of quick action buttons for Send, Receive, Add Asset, and Explore."
+    "TaskCards": {
+      "signature": "TaskCards(cards: TaskCard[])",
+      "description": "A grid of physical, slightly tilted cards for prominent tasks."
     },
-    "WalletMethodList": {
-      "signature": "WalletMethodList(title: string, methods: string[])",
-      "description": "Presents selectable payment/transfer options inspired by Telegram Wallet's choice screens."
+    "TaskList": {
+      "signature": "TaskList(title: string, items: TaskItem[])",
+      "description": "An interactive checklist of tasks."
     },
-    "SendFlow": {
-      "signature": "SendFlow(step: \"recipient\" | \"amount\" | \"review\" | \"receipt\", selectedAssetId: string, recipientRef?: string, amount?: string)",
-      "description": "Interactive 3-step Send flow: Recipient entry -> Amount selection -> Review & Demo confirmation."
+    "StatsRow": {
+      "signature": "StatsRow(stats: StatCard[])",
+      "description": "A row of metric chips or stat counters."
     },
-    "ReceivePanel": {
-      "signature": "ReceivePanel(assetId: string, addressKey: string, showQr?: boolean)",
-      "description": "Displays the public Stellar address for receiving payments, with QR code and Copy Address button."
+    "Question": {
+      "signature": "Question(text: string, options: Option[])",
+      "description": "A question with tappable options to steer priorities."
     },
-    "TransactionList": {
-      "signature": "TransactionList(filter: \"all\" | \"sent\" | \"received\", transactions?: string[])",
-      "description": "Activity feed showing recent Stellar payments with filter tabs (All, Sent, Received)."
+    "FollowUps": {
+      "signature": "FollowUps(options: Option[])",
+      "description": "Tappable pills for what to do or ask next."
     },
-    "TransactionDetail": {
-      "signature": "TransactionDetail(transactionId: string)",
-      "description": "Detailed view of an individual transaction showing hash, ledger, fee, and status."
+    "Option": {
+      "signature": "Option(label: string, kind?: \"urgent\" | \"focus\" | \"plan\" | \"clean\")",
+      "description": "A tappable quick reply action."
     },
-    "AddAssetPanel": {
-      "signature": "AddAssetPanel(query?: string, assets: string[])",
-      "description": "Curated asset catalog to search, discover, and add Stellar asset trustlines to the watchlist."
+    "TaskItem": {
+      "signature": "TaskItem(id: string, title: string, done?: boolean, priority?: \"urgent\" | \"high\" | \"normal\" | \"low\" | \"priority\" | \"not priority\", due?: string, note?: string)",
+      "description": "A single row item inside a TaskList."
     },
-    "ConnectedApps": {
-      "signature": "ConnectedApps(apps: string[])",
-      "description": "Curated directory of Stellar ecosystem apps, smart contracts, and tools."
+    "TaskCard": {
+      "signature": "TaskCard(id: string, title: string, priority: \"urgent\" | \"high\" | \"normal\" | \"low\" | \"priority\" | \"not priority\", due?: string, tag?: string, note?: string)",
+      "description": "A physical tilted card for a highlight task."
     },
-    "Notice": {
-      "signature": "Notice(tone: \"info\" | \"warning\" | \"success\" | \"danger\", title: string, description: string)",
-      "description": "Contextual demo badge or disclaimer informing the user of simulated testnet mode."
+    "StatCard": {
+      "signature": "StatCard(label: string, value: string, note?: string)",
+      "description": "A small status summary metric."
     }
   },
   "schema": {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "type": "object",
     "properties": {
-      "WalletScreen": {
-        "$ref": "#/$defs/WalletScreen"
+      "TodoBoard": {
+        "$ref": "#/$defs/TodoBoard"
       },
-      "BalanceHero": {
-        "$ref": "#/$defs/BalanceHero"
+      "DailyHeadline": {
+        "$ref": "#/$defs/DailyHeadline"
       },
-      "AssetList": {
-        "$ref": "#/$defs/AssetList"
+      "FocusPull": {
+        "$ref": "#/$defs/FocusPull"
       },
-      "AssetRow": {
-        "$ref": "#/$defs/AssetRow"
+      "Heading": {
+        "$ref": "#/$defs/Heading"
       },
-      "ActionGroup": {
-        "$ref": "#/$defs/ActionGroup"
+      "TaskCards": {
+        "$ref": "#/$defs/TaskCards"
       },
-      "WalletMethodList": {
-        "$ref": "#/$defs/WalletMethodList"
+      "TaskList": {
+        "$ref": "#/$defs/TaskList"
       },
-      "SendFlow": {
-        "$ref": "#/$defs/SendFlow"
+      "StatsRow": {
+        "$ref": "#/$defs/StatsRow"
       },
-      "ReceivePanel": {
-        "$ref": "#/$defs/ReceivePanel"
+      "Question": {
+        "$ref": "#/$defs/Question"
       },
-      "TransactionList": {
-        "$ref": "#/$defs/TransactionList"
+      "FollowUps": {
+        "$ref": "#/$defs/FollowUps"
       },
-      "TransactionDetail": {
-        "$ref": "#/$defs/TransactionDetail"
+      "Option": {
+        "$ref": "#/$defs/Option"
       },
-      "AddAssetPanel": {
-        "$ref": "#/$defs/AddAssetPanel"
+      "TaskItem": {
+        "$ref": "#/$defs/TaskItem"
       },
-      "ConnectedApps": {
-        "$ref": "#/$defs/ConnectedApps"
+      "TaskCard": {
+        "$ref": "#/$defs/TaskCard"
       },
-      "Notice": {
-        "$ref": "#/$defs/Notice"
+      "StatCard": {
+        "$ref": "#/$defs/StatCard"
       }
     },
     "required": [
-      "WalletScreen",
-      "BalanceHero",
-      "AssetList",
-      "AssetRow",
-      "ActionGroup",
-      "WalletMethodList",
-      "SendFlow",
-      "ReceivePanel",
-      "TransactionList",
-      "TransactionDetail",
-      "AddAssetPanel",
-      "ConnectedApps",
-      "Notice"
+      "TodoBoard",
+      "DailyHeadline",
+      "FocusPull",
+      "Heading",
+      "TaskCards",
+      "TaskList",
+      "StatsRow",
+      "Question",
+      "FollowUps",
+      "Option",
+      "TaskItem",
+      "TaskCard",
+      "StatCard"
     ],
     "additionalProperties": false,
     "$defs": {
-      "WalletScreen": {
+      "TodoBoard": {
         "type": "object",
         "properties": {
-          "title": {
-            "type": "string"
-          },
-          "activeTab": {
-            "type": "string",
-            "enum": [
-              "overview",
-              "send",
-              "receive",
-              "assets",
-              "activity",
-              "explore"
-            ]
-          },
-          "sections": {
-            "type": "array",
-            "items": {}
-          }
-        },
-        "required": [
-          "title",
-          "activeTab",
-          "sections"
-        ],
-        "additionalProperties": false,
-        "description": "Root container for the X Wallet desktop canvas. Composes child sections into a cohesive wallet view."
-      },
-      "BalanceHero": {
-        "type": "object",
-        "properties": {
-          "accountId": {
-            "type": "string"
-          },
-          "balanceKey": {
-            "type": "string"
-          },
-          "fiatCurrency": {
-            "type": "string"
-          },
-          "networkLabel": {
-            "type": "string"
-          },
-          "actions": {
+          "blocks": {
             "type": "array",
             "items": {
-              "type": "string"
-            }
-          }
-        },
-        "required": [
-          "accountId",
-          "balanceKey",
-          "fiatCurrency",
-          "networkLabel",
-          "actions"
-        ],
-        "additionalProperties": false,
-        "description": "Displays the main account card with total balance, Stellar testnet badge, and action buttons."
-      },
-      "AssetList": {
-        "type": "object",
-        "properties": {
-          "assets": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "showSearch": {
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "assets"
-        ],
-        "additionalProperties": false,
-        "description": "Displays the list of held and tracked Stellar assets (XLM, USDC, AQUA, etc.)."
-      },
-      "AssetRow": {
-        "type": "object",
-        "properties": {
-          "assetId": {
-            "type": "string"
-          },
-          "emphasis": {
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "assetId"
-        ],
-        "additionalProperties": false,
-        "description": "Single asset row showing balance, fiat value, icon, and 24h change."
-      },
-      "ActionGroup": {
-        "type": "object",
-        "properties": {
-          "actions": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "enum": [
-                "send",
-                "receive",
-                "add",
-                "swap",
-                "history"
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/DailyHeadline"
+                },
+                {
+                  "$ref": "#/$defs/FocusPull"
+                },
+                {
+                  "$ref": "#/$defs/Heading"
+                },
+                {
+                  "$ref": "#/$defs/TaskCards"
+                },
+                {
+                  "$ref": "#/$defs/TaskList"
+                },
+                {
+                  "$ref": "#/$defs/StatsRow"
+                },
+                {
+                  "$ref": "#/$defs/Question"
+                },
+                {
+                  "$ref": "#/$defs/FollowUps"
+                }
               ]
             }
           }
         },
         "required": [
-          "actions"
+          "blocks"
         ],
         "additionalProperties": false,
-        "description": "Row of quick action buttons for Send, Receive, Add Asset, and Explore."
+        "description": "The root container: one todo board reply."
       },
-      "WalletMethodList": {
+      "DailyHeadline": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "additionalProperties": false,
+        "description": "A grand editorial headline that opens the board."
+      },
+      "FocusPull": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string"
+          },
+          "note": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "additionalProperties": false,
+        "description": "A pull-quote defining the day's singular focus."
+      },
+      "Heading": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "additionalProperties": false,
+        "description": "A section heading."
+      },
+      "TaskCards": {
+        "type": "object",
+        "properties": {
+          "cards": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/TaskCard"
+            }
+          }
+        },
+        "required": [
+          "cards"
+        ],
+        "additionalProperties": false,
+        "description": "A grid of physical, slightly tilted cards for prominent tasks."
+      },
+      "TaskCard": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "priority": {
+            "type": "string",
+            "enum": [
+              "urgent",
+              "high",
+              "normal",
+              "low",
+              "priority",
+              "not priority"
+            ]
+          },
+          "due": {
+            "type": "string"
+          },
+          "tag": {
+            "type": "string"
+          },
+          "note": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "priority"
+        ],
+        "additionalProperties": false,
+        "description": "A physical tilted card for a highlight task."
+      },
+      "TaskList": {
         "type": "object",
         "properties": {
           "title": {
             "type": "string"
           },
-          "methods": {
+          "items": {
             "type": "array",
             "items": {
-              "type": "string"
+              "$ref": "#/$defs/TaskItem"
             }
           }
         },
         "required": [
           "title",
-          "methods"
+          "items"
         ],
         "additionalProperties": false,
-        "description": "Presents selectable payment/transfer options inspired by Telegram Wallet's choice screens."
+        "description": "An interactive checklist of tasks."
       },
-      "SendFlow": {
+      "TaskItem": {
         "type": "object",
         "properties": {
-          "step": {
-            "type": "string",
-            "enum": [
-              "recipient",
-              "amount",
-              "review",
-              "receipt"
-            ]
-          },
-          "selectedAssetId": {
+          "id": {
             "type": "string"
           },
-          "recipientRef": {
+          "title": {
             "type": "string"
           },
-          "amount": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "step",
-          "selectedAssetId"
-        ],
-        "additionalProperties": false,
-        "description": "Interactive 3-step Send flow: Recipient entry -> Amount selection -> Review & Demo confirmation."
-      },
-      "ReceivePanel": {
-        "type": "object",
-        "properties": {
-          "assetId": {
-            "type": "string"
-          },
-          "addressKey": {
-            "type": "string"
-          },
-          "showQr": {
+          "done": {
             "type": "boolean"
-          }
-        },
-        "required": [
-          "assetId",
-          "addressKey"
-        ],
-        "additionalProperties": false,
-        "description": "Displays the public Stellar address for receiving payments, with QR code and Copy Address button."
-      },
-      "TransactionList": {
-        "type": "object",
-        "properties": {
-          "filter": {
+          },
+          "priority": {
             "type": "string",
             "enum": [
-              "all",
-              "sent",
-              "received"
+              "urgent",
+              "high",
+              "normal",
+              "low",
+              "priority",
+              "not priority"
             ]
           },
-          "transactions": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          }
-        },
-        "required": [
-          "filter"
-        ],
-        "additionalProperties": false,
-        "description": "Activity feed showing recent Stellar payments with filter tabs (All, Sent, Received)."
-      },
-      "TransactionDetail": {
-        "type": "object",
-        "properties": {
-          "transactionId": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "transactionId"
-        ],
-        "additionalProperties": false,
-        "description": "Detailed view of an individual transaction showing hash, ledger, fee, and status."
-      },
-      "AddAssetPanel": {
-        "type": "object",
-        "properties": {
-          "query": {
+          "due": {
             "type": "string"
           },
-          "assets": {
+          "note": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "title"
+        ],
+        "additionalProperties": false,
+        "description": "A single row item inside a TaskList."
+      },
+      "StatsRow": {
+        "type": "object",
+        "properties": {
+          "stats": {
             "type": "array",
             "items": {
-              "type": "string"
+              "$ref": "#/$defs/StatCard"
             }
           }
         },
         "required": [
-          "assets"
+          "stats"
         ],
         "additionalProperties": false,
-        "description": "Curated asset catalog to search, discover, and add Stellar asset trustlines to the watchlist."
+        "description": "A row of metric chips or stat counters."
       },
-      "ConnectedApps": {
+      "StatCard": {
         "type": "object",
         "properties": {
-          "apps": {
+          "label": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          },
+          "note": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "label",
+          "value"
+        ],
+        "additionalProperties": false,
+        "description": "A small status summary metric."
+      },
+      "Question": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string"
+          },
+          "options": {
             "type": "array",
             "items": {
-              "type": "string"
+              "$ref": "#/$defs/Option"
             }
           }
         },
         "required": [
-          "apps"
+          "text",
+          "options"
         ],
         "additionalProperties": false,
-        "description": "Curated directory of Stellar ecosystem apps, smart contracts, and tools."
+        "description": "A question with tappable options to steer priorities."
       },
-      "Notice": {
+      "Option": {
         "type": "object",
         "properties": {
-          "tone": {
+          "label": {
+            "type": "string"
+          },
+          "kind": {
             "type": "string",
             "enum": [
-              "info",
-              "warning",
-              "success",
-              "danger"
+              "urgent",
+              "focus",
+              "plan",
+              "clean"
             ]
-          },
-          "title": {
-            "type": "string"
-          },
-          "description": {
-            "type": "string"
           }
         },
         "required": [
-          "tone",
-          "title",
-          "description"
+          "label"
         ],
         "additionalProperties": false,
-        "description": "Contextual demo badge or disclaimer informing the user of simulated testnet mode."
+        "description": "A tappable quick reply action."
+      },
+      "FollowUps": {
+        "type": "object",
+        "properties": {
+          "options": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/Option"
+            }
+          }
+        },
+        "required": [
+          "options"
+        ],
+        "additionalProperties": false,
+        "description": "Tappable pills for what to do or ask next."
       }
     }
   },
   "promptOptions": {
-    "preamble": "You are X Wallet, an intelligent desktop self-custodial wallet assistant for the Stellar network. You compose polished, high-contrast desktop wallet screens using OpenUI Lang. Every UI hierarchy starts with `root = WalletScreen(...)`.",
     "additionalRules": [
-      "Always set root = WalletScreen(title, activeTab, [sections]).",
-      "For the wallet overview: compose BalanceHero, AssetList, TransactionList, and optionally ConnectedApps.",
-      "For sending funds: compose SendFlow with the asset and destination, or WalletMethodList.",
-      "For receiving funds: compose ReceivePanel with the public Stellar address.",
-      "For activity/history: compose TransactionList with filter ('all', 'sent', or 'received').",
-      "Use Stellar native assets: XLM, USDC, AQUA, EURC.",
-      "All values are deterministic testnet fixtures; never claim real money is moving."
+      "You are an elegant executive personal assistant and productivity planner. Each reply is one OpenUI Lang program whose root is TodoBoard. Never write prose outside the program, and never use code fences.",
+      "Brevity and completeness are essential: generate exactly 2 TaskCards and 2 TaskItems so the entire program completes cleanly without truncation.",
+      "Structure replies cleanly: start with a DailyHeadline or FocusPull, display high-impact tasks as TaskCards or a TaskList, and end with FollowUps holding 2 or 3 suggested next actions.",
+      "DailyHeadline takes exactly ONE string argument, never an array or list of tasks, e.g. DailyHeadline(\"...\"). Only TaskCards or TaskList take task collections.",
+      "Quote rules: every string must start and end with exactly one double quote. Never write trailing double-double quotes like ==\"\").",
+      "Use markings on keywords: ==highlight== for key phrases, _underline_ for primary deadlines, and ((circle)) for counts or critical metrics.",
+      "Give tasks concrete priorities: use 'priority' for key items and 'not priority' for routine items. Set realistic time estimates or due tags where appropriate.",
+      "End every reply with FollowUps: 2 or 3 things the user might say or do next, in their words, 2 to 5 words each."
+    ],
+    "examples": [
+      "root = TodoBoard([h, p, cards, list, f])\nh = DailyHeadline(\"Tuesday, Oct 29 — ==3 Big Rocks== ahead\")\np = FocusPull(\"Protect 9am to 11am for system architecture. Silence Slack.\", \"highest leverage block\")\ncards = TaskCards([c1, c2])\nc1 = TaskCard(\"c1\", \"Deploy v2.4 to production cluster\", \"urgent\", \"Today 11am\", \"DevOps\", \"check migrations first\")\nc2 = TaskCard(\"c2\", \"Review design team's proposal\", \"high\", \"Today 3pm\", \"Design\", \"give async feedback\")\nlist = TaskList(\"Quick Wins\", [t1, t2])\nt1 = TaskItem(\"t1\", \"Approve pending pull requests\", false, \"high\", \"1h\")\nt2 = TaskItem(\"t2\", \"Reply to investor email\", false, \"normal\", \"End of day\")\nf = FollowUps([Option(\"Plan tomorrow\"), Option(\"Focus on urgent\")])"
     ]
   }
 }

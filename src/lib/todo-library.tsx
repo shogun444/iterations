@@ -59,7 +59,7 @@ export function Marked({
   );
 }
 
-function HeadlineCircle({ children }: { children: React.ReactNode }) {
+function HeadlineHairpinUnderline({ children }: { children: React.ReactNode }) {
   const containerRef = useRef<HTMLSpanElement>(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
@@ -82,36 +82,53 @@ function HeadlineCircle({ children }: { children: React.ReactNode }) {
   const w = dimensions.width;
   const h = dimensions.height;
 
-  // Hand-drawn sketch circle / ellipse around the headline that cleanly encloses 1 or 2 lines
-  // rx and ry give generous clearance so the hand-drawn loop never cuts through the text (matches Image 2)
-  const pathD =
-    w > 0 && h > 0
-      ? roughEllipse(w / 2, h / 2, Math.round(w / 2 + 10), Math.round(h / 2 + 8), {
-          seed: 142,
-          roughness: 1.15,
-          boil: 0,
-        })
-      : "";
+  // Hand-drawn folded hairpin underline matching user's reference:
+  // Continuous fluid stroke: starts at bottom-right, sweeps left, loops around in a tight
+  // smooth hairpin U-turn at the left, and sweeps all the way across to the right under the text.
+  const pathD = useMemo(() => {
+    if (w <= 0 || h <= 0) return "";
+    const yTop = h + 2;
+    const gap = 5.2;
+    const yBottom = yTop + gap;
+    const xLeft = -6;
+    const loopExtend = 12;
+    const xRightTop = w + 8;
+    const xRightBottom = Math.max(w * 0.84, w - 38);
+
+    return [
+      `M ${xRightBottom.toFixed(1)},${yBottom.toFixed(1)}`,
+      `C ${(xRightBottom * 0.55).toFixed(1)},${(yBottom + 0.5).toFixed(1)} ${(xLeft + (xRightBottom - xLeft) * 0.25).toFixed(1)},${(yBottom - 0.2).toFixed(1)} ${xLeft.toFixed(1)},${yBottom.toFixed(1)}`,
+      `C ${(xLeft - loopExtend).toFixed(1)},${(yBottom + 0.5).toFixed(1)} ${(xLeft - loopExtend).toFixed(1)},${(yTop - 0.5).toFixed(1)} ${xLeft.toFixed(1)},${yTop.toFixed(1)}`,
+      `C ${(xLeft + (xRightTop - xLeft) * 0.35).toFixed(1)},${(yTop - 0.4).toFixed(1)} ${(xLeft + (xRightTop - xLeft) * 0.7).toFixed(1)},${(yTop + 0.4).toFixed(1)} ${xRightTop.toFixed(1)},${yTop.toFixed(1)}`,
+    ].join(" ");
+  }, [w, h]);
 
   return (
-    <span ref={containerRef} className="todo-headline-circle-wrap">
+    <span ref={containerRef} className="todo-headline-underline-wrap">
       {children}
       {w > 0 && (
         <svg
-          className="todo-headline-circle-svg"
+          className="todo-headline-underline-svg"
           aria-hidden="true"
           style={{
             position: "absolute",
             top: 0,
             left: 0,
             width: w,
-            height: h,
+            height: h + 16,
             overflow: "visible",
             pointerEvents: "none",
             zIndex: 0,
           }}
         >
-          <path d={pathD} stroke="currentColor" strokeWidth={2.4} fill="none" strokeLinecap="round" />
+          <path
+            d={pathD}
+            stroke="currentColor"
+            strokeWidth={2.4}
+            fill="none"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
         </svg>
       )}
     </span>
@@ -133,9 +150,9 @@ function DailyHeadlineView({ props }: ComponentRenderProps<{ text?: string }>) {
 
   return (
     <h1 className="todo-headline">
-      <HeadlineCircle>
+      <HeadlineHairpinUnderline>
         <span className="todo-headline-text">{strippedText}</span>
-      </HeadlineCircle>
+      </HeadlineHairpinUnderline>
     </h1>
   );
 }

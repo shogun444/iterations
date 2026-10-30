@@ -4,7 +4,7 @@ import React, { Fragment, useState, useEffect, useMemo, useRef } from "react";
 import type { ComponentRenderProps } from "@openuidev/lang-core";
 import { useTriggerAction } from "@openuidev/react-lang";
 import { DrawablyCircle, DrawablyHighlight, DrawablyUnderline } from "../drawably/react.js";
-import { roughCircle, roughLine } from "../drawably/index.js";
+import { roughCircle, roughEllipse } from "../drawably/index.js";
 import { buildTodoLibrary } from "./todo-schema";
 import {
   TodoProvider,
@@ -59,7 +59,7 @@ export function Marked({
   );
 }
 
-function HeadlineDoubleUnderline({ children }: { children: React.ReactNode }) {
+function HeadlineCircle({ children }: { children: React.ReactNode }) {
   const containerRef = useRef<HTMLSpanElement>(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
@@ -82,32 +82,36 @@ function HeadlineDoubleUnderline({ children }: { children: React.ReactNode }) {
   const w = dimensions.width;
   const h = dimensions.height;
 
-  // Hand-drawn red double underline matching the user's sketch marker reference:
-  // Line 1: primary broad sweep under the letters
-  const d1 = w > 0 ? roughLine(-4, h + 2, w + 6, h + 1, { seed: 88, roughness: 1.1, boil: 0 }) : "";
-  // Line 2: parallel second sketch stroke slightly lower
-  const d2 = w > 0 ? roughLine(4, h + 10, w - 2, h + 9, { seed: 153, roughness: 1.25, boil: 0 }) : "";
+  // Hand-drawn sketch circle / ellipse around the headline that cleanly encloses 1 or 2 lines
+  // rx and ry give generous clearance so the hand-drawn loop never cuts through the text (matches Image 2)
+  const pathD =
+    w > 0 && h > 0
+      ? roughEllipse(w / 2, h / 2, Math.round(w / 2 + 10), Math.round(h / 2 + 8), {
+          seed: 142,
+          roughness: 1.15,
+          boil: 0,
+        })
+      : "";
 
   return (
-    <span ref={containerRef} className="todo-headline-double-wrap">
+    <span ref={containerRef} className="todo-headline-circle-wrap">
       {children}
       {w > 0 && (
         <svg
-          className="todo-headline-double-svg"
+          className="todo-headline-circle-svg"
           aria-hidden="true"
           style={{
             position: "absolute",
             top: 0,
             left: 0,
             width: w,
-            height: h + 18,
+            height: h,
             overflow: "visible",
             pointerEvents: "none",
             zIndex: 0,
           }}
         >
-          <path d={d1} stroke="currentColor" strokeWidth={3.2} fill="none" strokeLinecap="round" />
-          <path d={d2} stroke="currentColor" strokeWidth={2.6} fill="none" strokeLinecap="round" />
+          <path d={pathD} stroke="currentColor" strokeWidth={2.4} fill="none" strokeLinecap="round" />
         </svg>
       )}
     </span>
@@ -129,9 +133,9 @@ function DailyHeadlineView({ props }: ComponentRenderProps<{ text?: string }>) {
 
   return (
     <h1 className="todo-headline">
-      <HeadlineDoubleUnderline>
+      <HeadlineCircle>
         <span className="todo-headline-text">{strippedText}</span>
-      </HeadlineDoubleUnderline>
+      </HeadlineCircle>
     </h1>
   );
 }
@@ -1012,8 +1016,12 @@ function extractInitialTasks(blocks: unknown[]): {
             date = headlineDate || toIsoDate(baseDate);
           }
 
+          // Deterministic task ID without Math.random to ensure stable React reconciliation
+          const stableId =
+            ip.id || `item-${i}-${(ip.title || "").toLowerCase().replace(/[^a-z0-9]/g, "").slice(0, 16)}`;
+
           tasks.push({
-            id: ip.id || `item-${i}-${Math.random().toString(36).slice(2, 6)}`,
+            id: stableId,
             title: ip.title,
             done: !!ip.done,
             priority: ip.priority,
@@ -1045,27 +1053,14 @@ function TodoBoardInner({
 }) {
   const explicitCalendarInBlocks = blocks.some((b: any) => getBlockTypeName(b) === "TodoCalendar");
   const hasCalendar = hasExplicitCalendar || explicitCalendarInBlocks;
-  const hasTaskList = blocks.some((b: any) => getBlockTypeName(b) === "TaskList");
 
   return (
     <div className="todo-board-container">
-      {blocks.map((node, i) => {
-        const isTaskList = getBlockTypeName(node) === "TaskList";
-        return (
-          <Fragment key={i}>
-            {renderNode(node) as React.ReactNode}
-            {!hasCalendar && isTaskList && (
-              <TodoCalendarView
-                props={{ title: "Schedule & Deadlines" }}
-                renderNode={renderNode}
-                statementId="todo-cal-auto"
-              />
-            )}
-          </Fragment>
-        );
-      })}
+      {blocks.map((node, i) => (
+        <Fragment key={i}>{renderNode(node) as React.ReactNode}</Fragment>
+      ))}
 
-      {!hasCalendar && !hasTaskList && (
+      {!hasCalendar && (
         <TodoCalendarView
           props={{ title: "Schedule & Deadlines" }}
           renderNode={renderNode}
@@ -1076,12 +1071,12 @@ function TodoBoardInner({
   );
 }
 
-function TodoBoardView({ props, renderNode }: ComponentRenderProps<{ blocks?: unknown[] }>) {
+function TodoBoardView({ props, renderNode, statementId }: ComponentRenderProps<{ blocks?: unknown[] }>) {
   const blocks = list(props?.blocks);
   const { tasks, headlineDate, hasCalendar } = useMemo(() => extractInitialTasks(blocks), [blocks]);
 
   return (
-    <TodoProvider initialTasks={tasks} defaultDate={headlineDate}>
+    <TodoProvider key={statementId || "todo-board"} initialTasks={tasks} defaultDate={headlineDate}>
       <TodoBoardInner blocks={blocks} renderNode={renderNode} hasExplicitCalendar={hasCalendar} />
     </TodoProvider>
   );

@@ -88,59 +88,79 @@ body,
 /* 1. Daily Headline */
 .todo-headline,
 .todo-headline-text {
-  color: var(--todo-ink) !important;
+  color: #404040 !important;
   font-family: var(--font-inter), "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
 }
 
 .todo-headline {
   margin: 0;
   font-family: var(--font-inter), "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
-  font-size: clamp(32px, 4.8vw, 48px);
+  font-size: clamp(28px, 4.2vw, 42px);
   font-weight: 700;
-  line-height: 1.12;
-  letter-spacing: -0.03em;
-  text-wrap: balance;
-  color: var(--todo-ink);
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+  color: #404040 !important;
+  display: inline-block;
+  width: fit-content;
+  max-width: 100%;
 }
 
-.todo-headline-double-wrap {
+.todo-headline-circle-wrap {
   position: relative;
   display: inline-block;
-  padding-bottom: 14px;
+  width: fit-content;
+  max-width: 100%;
+  padding: 18px 36px;
+  box-sizing: border-box;
 }
 
 .todo-headline-text {
   position: relative;
   z-index: 1;
+  display: inline-block;
+  width: fit-content;
+  max-width: 100%;
 }
 
-.todo-headline-double-svg {
+.todo-headline-circle-svg {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
+  height: 100%;
   pointer-events: none;
   overflow: visible;
   z-index: 0;
   color: #404040; /* light mode: neutral-700 */
 }
 
-.todo-headline-double-svg path {
+.todo-headline-circle-svg path {
   stroke: currentColor;
 }
 
 /* In dark mode: #f3f4f6 */
-[data-theme="dark"] .todo-headline-double-svg,
-[data-openui-theme="dark"] .todo-headline-double-svg,
-.dark .todo-headline-double-svg,
-.openui-agent-interface[data-theme="dark"] .todo-headline-double-svg {
+[data-theme="dark"] .todo-headline,
+[data-theme="dark"] .todo-headline-text,
+[data-openui-theme="dark"] .todo-headline,
+[data-openui-theme="dark"] .todo-headline-text,
+.dark .todo-headline,
+.dark .todo-headline-text,
+.openui-agent-interface[data-theme="dark"] .todo-headline,
+.openui-agent-interface[data-theme="dark"] .todo-headline-text {
   color: #f3f4f6 !important;
 }
 
-[data-theme="dark"] .todo-headline-double-svg path,
-[data-openui-theme="dark"] .todo-headline-double-svg path,
-.dark .todo-headline-double-svg path,
-.openui-agent-interface[data-theme="dark"] .todo-headline-double-svg path {
+[data-theme="dark"] .todo-headline-circle-svg,
+[data-openui-theme="dark"] .todo-headline-circle-svg,
+.dark .todo-headline-circle-svg,
+.openui-agent-interface[data-theme="dark"] .todo-headline-circle-svg {
+  color: #f3f4f6 !important;
+}
+
+[data-theme="dark"] .todo-headline-circle-svg path,
+[data-openui-theme="dark"] .todo-headline-circle-svg path,
+.dark .todo-headline-circle-svg path,
+.openui-agent-interface[data-theme="dark"] .todo-headline-circle-svg path {
   stroke: #f3f4f6 !important;
 }
 

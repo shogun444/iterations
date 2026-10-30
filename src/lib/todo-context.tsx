@@ -126,15 +126,41 @@ export function TodoProvider({
   const initialDate = defaultDate && defaultDate >= todayStr ? defaultDate : todayStr;
   const [selectedDate, setSelectedDate] = useState<string>(initialDate);
 
-  // Merge streamed tasks when initialTasks expands during streaming without creating user activity events
+  // Sync selectedDate when defaultDate updates (e.g. when headline arrives or changes)
+  useEffect(() => {
+    if (defaultDate && defaultDate >= todayStr) {
+      setSelectedDate(defaultDate);
+    }
+  }, [defaultDate, todayStr]);
+
+  // Synchronize tasks live during streaming so that updates are shown immediately without requiring refresh
   useEffect(() => {
     if (!initialTasks || initialTasks.length === 0) return;
     setTasks((prev) => {
-      const newItems = initialTasks.filter(
-        (initT) => !prev.some((p) => p.id === initT.id || (p.title === initT.title && p.date === initT.date))
+      if (prev.length === 0) return initialTasks;
+
+      // Index previous state to preserve user interactive changes (e.g. toggled done, edited title)
+      const prevMap = new Map(prev.map((t) => [t.id, t]));
+      const prevTitleMap = new Map(prev.map((t) => [`${t.title}::${t.date}`, t]));
+
+      const synced: TodoTask[] = initialTasks.map((initT) => {
+        const existing = prevMap.get(initT.id) || prevTitleMap.get(`${initT.title}::${initT.date}`);
+        if (existing) {
+          return {
+            ...initT,
+            done: existing.done,
+            title: existing.title,
+          };
+        }
+        return initT;
+      });
+
+      // Preserve user manually added tasks
+      const manualTasks = prev.filter(
+        (p) => p.id.startsWith("task-manual-") || (p.id.startsWith("task-") && !initialTasks.some((it) => it.id === p.id))
       );
-      if (newItems.length === 0) return prev;
-      return [...prev, ...newItems];
+
+      return [...synced, ...manualTasks];
     });
   }, [initialTasks]);
 

@@ -59,54 +59,82 @@ export function Marked({
   );
 }
 
-function HeadlineHairpinUnderline({ children }: { children: React.ReactNode }) {
+function HeadlineHairpinUnderline({
+  primaryText,
+  trailingText,
+}: {
+  primaryText: string;
+  trailingText?: string;
+}) {
   const containerRef = useRef<HTMLSpanElement>(null);
-  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+  const primaryRef = useRef<HTMLSpanElement>(null);
+  const [metrics, setMetrics] = useState({
+    containerW: 0,
+    containerH: 0,
+    primaryW: 0,
+    primaryH: 0,
+  });
 
   useEffect(() => {
-    if (!containerRef.current) return;
     const update = () => {
-      if (containerRef.current) {
-        const rect = containerRef.current.getBoundingClientRect();
-        if (rect.width > 0 && rect.height > 0) {
-          setDimensions({ width: Math.round(rect.width), height: Math.round(rect.height) });
+      if (containerRef.current && primaryRef.current) {
+        const cRect = containerRef.current.getBoundingClientRect();
+        const pRect = primaryRef.current.getBoundingClientRect();
+        if (cRect.width > 0 && pRect.width > 0) {
+          setMetrics({
+            containerW: Math.round(cRect.width),
+            containerH: Math.round(cRect.height),
+            primaryW: Math.round(pRect.width),
+            primaryH: Math.round(pRect.height),
+          });
         }
       }
     };
     update();
     const ro = new ResizeObserver(update);
-    ro.observe(containerRef.current);
+    if (containerRef.current) ro.observe(containerRef.current);
+    if (primaryRef.current) ro.observe(primaryRef.current);
     return () => ro.disconnect();
-  }, []);
+  }, [primaryText, trailingText]);
 
-  const w = dimensions.width;
-  const h = dimensions.height;
+  const xStart = 22; // matches padding-left: 22px
+  const primaryW = metrics.primaryW || (metrics.containerW ? metrics.containerW * 0.8 : 0);
+  const textH = metrics.primaryH || metrics.containerH;
 
   // Hand-drawn folded hairpin underline matching user's reference:
-  // Continuous fluid stroke: starts at bottom-right, sweeps left, loops around in a tight
-  // smooth hairpin U-turn at the left, and sweeps all the way across to the right under the text.
+  // 1. Never clipped: apex sits safely inside at x = 4px (well inside [0, 22px] padding space).
+  // 2. Length terminates right past the primary text (e.g. right past 'y' in Recovery, leaving 'Split' clean).
+  // 3. Fluid calligraphic inflection with subtle natural bow instead of being dead-straight.
   const pathD = useMemo(() => {
-    if (w <= 0 || h <= 0) return "";
-    const yTop = h + 2;
-    const gap = 5.2;
+    if (primaryW <= 0 || textH <= 0) return "";
+    const xApex = 4;
+    const xTurnStart = xStart - 3;
+    const xTurnExit = xStart - 1;
+    const xRightTop = xStart + primaryW + 8;
+    const xRightBottom = xStart + primaryW - 32;
+
+    const yTop = textH + 2;
+    const gap = 5.4;
     const yBottom = yTop + gap;
-    const xLeft = -6;
-    const loopExtend = 12;
-    const xRightTop = w + 8;
-    const xRightBottom = Math.max(w * 0.84, w - 38);
+    const span = primaryW;
 
     return [
-      `M ${xRightBottom.toFixed(1)},${yBottom.toFixed(1)}`,
-      `C ${(xRightBottom * 0.55).toFixed(1)},${(yBottom + 0.5).toFixed(1)} ${(xLeft + (xRightBottom - xLeft) * 0.25).toFixed(1)},${(yBottom - 0.2).toFixed(1)} ${xLeft.toFixed(1)},${yBottom.toFixed(1)}`,
-      `C ${(xLeft - loopExtend).toFixed(1)},${(yBottom + 0.5).toFixed(1)} ${(xLeft - loopExtend).toFixed(1)},${(yTop - 0.5).toFixed(1)} ${xLeft.toFixed(1)},${yTop.toFixed(1)}`,
-      `C ${(xLeft + (xRightTop - xLeft) * 0.35).toFixed(1)},${(yTop - 0.4).toFixed(1)} ${(xLeft + (xRightTop - xLeft) * 0.7).toFixed(1)},${(yTop + 0.4).toFixed(1)} ${xRightTop.toFixed(1)},${yTop.toFixed(1)}`,
+      `M ${xRightBottom.toFixed(1)},${(yBottom + 0.8).toFixed(1)}`,
+      `C ${(xStart + span * 0.65).toFixed(1)},${(yBottom + 1.6).toFixed(1)} ${(xStart + span * 0.25).toFixed(1)},${(yBottom - 0.2).toFixed(1)} ${xTurnStart.toFixed(1)},${yBottom.toFixed(1)}`,
+      `C ${(xApex).toFixed(1)},${(yBottom + 1.2).toFixed(1)} ${(xApex).toFixed(1)},${(yTop - 1.2).toFixed(1)} ${xTurnExit.toFixed(1)},${yTop.toFixed(1)}`,
+      `C ${(xStart + span * 0.35).toFixed(1)},${(yTop + 1.6).toFixed(1)} ${(xStart + span * 0.72).toFixed(1)},${(yTop - 0.8).toFixed(1)} ${xRightTop.toFixed(1)},${(yTop - 1.0).toFixed(1)}`,
     ].join(" ");
-  }, [w, h]);
+  }, [primaryW, textH]);
 
   return (
     <span ref={containerRef} className="todo-headline-underline-wrap">
-      {children}
-      {w > 0 && (
+      <span className="todo-headline-text">
+        <span ref={primaryRef} className="todo-headline-primary">
+          {primaryText}
+        </span>
+        {trailingText ? <span className="todo-headline-trailing">{trailingText}</span> : null}
+      </span>
+      {metrics.containerW > 0 && (
         <svg
           className="todo-headline-underline-svg"
           aria-hidden="true"
@@ -114,8 +142,8 @@ function HeadlineHairpinUnderline({ children }: { children: React.ReactNode }) {
             position: "absolute",
             top: 0,
             left: 0,
-            width: w,
-            height: h + 16,
+            width: metrics.containerW,
+            height: textH + 20,
             overflow: "visible",
             pointerEvents: "none",
             zIndex: 0,
@@ -142,17 +170,32 @@ function DailyHeadlineView({ props }: ComponentRenderProps<{ text?: string }>) {
     /^(?:[A-Za-z]+,\s+)?[A-Za-z]+\s+\d+(?:st|nd|rd|th)?(?:\s*,\s*\d{4})?\s*[-—–:]\s*/i,
     ""
   );
-  // Strip any wrapping highlight (==...==) or underline (_..._) markers
-  const strippedText = cleanedText
-    .replace(/==([^=]+)==/g, "$1")
-    .replace(/_([^_]+)_/g, "$1")
-    .trim();
+
+  let primaryText = cleanedText;
+  let trailingText = "";
+
+  const explicitMatch = cleanedText.match(/^_([^_]+)_(.*)$/);
+  if (explicitMatch) {
+    primaryText = explicitMatch[1].trim();
+    trailingText = explicitMatch[2].trim();
+  } else {
+    const stripped = cleanedText.replace(/==([^=]+)==/g, "$1").replace(/_([^_]+)_/g, "$1").trim();
+    // Match common suffix category words (Split, Day, Board, Plan, Routine, Session, Deadlines, Checklist, Overview)
+    const suffixMatch = stripped.match(
+      /^(.*?)\s+(Split|Day|Board|Plan|Routine|Session|Deadlines|Checklist|Overview)$/i
+    );
+    if (suffixMatch) {
+      primaryText = suffixMatch[1].trim();
+      trailingText = suffixMatch[2].trim();
+    } else {
+      primaryText = stripped;
+      trailingText = "";
+    }
+  }
 
   return (
     <h1 className="todo-headline">
-      <HeadlineHairpinUnderline>
-        <span className="todo-headline-text">{strippedText}</span>
-      </HeadlineHairpinUnderline>
+      <HeadlineHairpinUnderline primaryText={primaryText} trailingText={trailingText} />
     </h1>
   );
 }

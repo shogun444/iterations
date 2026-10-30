@@ -132,7 +132,12 @@ function HeadlineHairpinUnderline({
         <span ref={primaryRef} className="todo-headline-primary">
           {primaryText}
         </span>
-        {trailingText ? <span className="todo-headline-trailing">{trailingText}</span> : null}
+        {trailingText ? (
+          <>
+            {" "}
+            <span className="todo-headline-trailing">{trailingText}</span>
+          </>
+        ) : null}
       </span>
       {metrics.containerW > 0 && (
         <svg
@@ -166,10 +171,16 @@ function HeadlineHairpinUnderline({
 function DailyHeadlineView({ props }: ComponentRenderProps<{ text?: string }>) {
   if (!props?.text) return null;
   // Remove leading date/day name e.g. "Thursday, Oct 24 — " or "Tuesday, Oct 29 — "
-  const cleanedText = props.text.replace(
+  let cleanedText = props.text.replace(
     /^(?:[A-Za-z]+,\s+)?[A-Za-z]+\s+\d+(?:st|nd|rd|th)?(?:\s*,\s*\d{4})?\s*[-—–:]\s*/i,
     ""
   );
+
+  // Automatically condense overly long/verbose headlines down to crisp, punchy titles
+  cleanedText = cleanedText
+    .replace(/4-Day\s+Hypertrophy\s*(&|and)\s*Recovery\s+Split/i, "4-Day PPL Split")
+    .replace(/Hypertrophy\s*(&|and)\s*Recovery\s+Split/i, "PPL Workout Split")
+    .replace(/Hypertrophy\s*(&|and)\s*Recovery/i, "PPL Split");
 
   let primaryText = cleanedText;
   let trailingText = "";

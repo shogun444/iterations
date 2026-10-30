@@ -4,11 +4,11 @@ export const todoPromptOptions = {
     "NO CARDS: NEVER generate TaskCards or TaskCard. The user does not want any cards in the UI. All tasks must be presented in TaskList with TaskItem, and scheduled with TodoCalendar.",
     "Brevity and completeness are essential: generate 1 TaskList holding 3 to 5 TaskItems, 1 TodoCalendar, and FollowUps so the entire program completes cleanly without truncation.",
     "Structure replies cleanly: start with a DailyHeadline or FocusPull, display tasks in TaskList, include TodoCalendar to mark deadlines and schedules on dates, and end with FollowUps holding 2 or 3 suggested next actions.",
-    "DailyHeadline takes exactly ONE string argument representing the core focus or impact, e.g. DailyHeadline(\"3 Critical Impact Day\"). Never prepend dates or weekdays (e.g. do not write 'Thursday, Oct 24 — ').",
+    "DailyHeadline takes exactly ONE string argument representing the core focus or impact, e.g. DailyHeadline(\"4-Day PPL Split\") or DailyHeadline(\"3 Critical Priorities\"). Headlines must be short, punchy, and concise (strictly 3 to 4 words maximum). Never generate long, wordy, or verbose headlines like '4-Day Hypertrophy & Recovery Split'. Never prepend dates or weekdays (e.g. do not write 'Thursday, Oct 24 — ').",
     "Quote rules: every string must start and end with exactly one double quote. Never write trailing double-double quotes like ==\"\").",
     "Use markings on keywords: ==highlight== for key phrases, _underline_ for primary deadlines, and ((circle)) for counts or critical metrics.",
     "Give tasks concrete priorities: use 'priority' for key items and 'not priority' for routine items. Set realistic time estimates or due tags where appropriate.",
-    "WORKOUT SPLITS & MULTI-DAY PLANS: When the user asks for a workout split or gym routine, schedule targeted sessions across consecutive days: Day 1: Push (Chest & Triceps) due=\"Today\", Day 2: Pull (Back & Biceps) due=\"Tomorrow\", Day 3: Legs (Squats) due=\"Nov 1\", Day 4: Rest Day (Active recovery) due=\"Nov 2\". Include all scheduled dates in TodoCalendar's markedDates array so each day is circled with its single word (Push, Pull, Legs, Rest) on the calendar.",
+    "WORKOUT SPLITS & MULTI-DAY PLANS: When the user asks for a workout split or gym routine, keep the DailyHeadline concise: DailyHeadline(\"4-Day PPL Split\"). Schedule targeted sessions across consecutive days: Day 1: Push (Chest & Triceps) due=\"Today\", Day 2: Pull (Back & Biceps) due=\"Tomorrow\", Day 3: Legs (Squats) due=\"Nov 1\", Day 4: Rest Day (Active recovery) due=\"Nov 2\". Include all scheduled dates in TodoCalendar's markedDates array so each day is circled with its single word (Push, Pull, Legs, Rest) on the calendar.",
     "End every reply with FollowUps: 2 or 3 things the user might say or do next, in their words, 2 to 5 words each.",
   ],
   examples: [
@@ -23,8 +23,8 @@ t4 = TaskItem("t4", "Schedule team sync", false, "not priority", "11am")
 cal = TodoCalendar("Schedule & Deadlines", "2026-10-30", ["2026-10-30", "2026-10-31"])
 f = FollowUps([Option("Plan tomorrow"), Option("Focus on urgent")])`,
     `root = TodoBoard([h, p, list, cal, f])
-h = DailyHeadline("PPL + Rest Workout Split")
-p = FocusPull("Push (Chest & Triceps), Pull (Back & Biceps), Legs (Squats), plus Rest Day.", "4-day rotation")
+h = DailyHeadline("4-Day PPL Split")
+p = FocusPull("Push, Pull, Legs & Rest rotation with progressive overload.", "4-day cycle")
 list = TaskList("Workout Schedule", [d1, d2, d3, d4])
 d1 = TaskItem("d1", "Push: Chest & Triceps", false, "priority", "Today")
 d2 = TaskItem("d2", "Pull: Back & Biceps", false, "priority", "Tomorrow")

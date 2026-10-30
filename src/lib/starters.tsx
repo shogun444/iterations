@@ -2,8 +2,8 @@ export const OPENUI_LOGO = "/openui-logo.svg";
 
 export const STARTERS = [
   {
-    displayText: "PPL gym split: Push, Pull, Legs & Rest",
-    prompt: "Plan a gym workout split: Push (chest & triceps), Pull (back & biceps), Legs (squats), and Rest day scheduled across consecutive days.",
+    displayText: "4-Day PPL split: Push, Pull, Legs & Rest",
+    prompt: "Plan a concise 4-day PPL workout split with headline DailyHeadline(\"4-Day PPL Split\"): Push (chest & triceps), Pull (back & biceps), Legs (squats), and Rest day scheduled across consecutive days.",
   },
   {
     displayText: "Plan my day around 3 critical tasks",

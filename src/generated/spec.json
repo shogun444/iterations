@@ -2,8 +2,12 @@
   "root": "TodoBoard",
   "components": {
     "TodoBoard": {
-      "signature": "TodoBoard(blocks: (DailyHeadline | FocusPull | Heading | TaskList | TodoCalendar | StatsRow | Question | FollowUps)[])",
+      "signature": "TodoBoard(blocks: (AgentActivity | DailyHeadline | FocusPull | Heading | TaskList | TodoCalendar | StatsRow | Question | FollowUps)[])",
       "description": "The root container: one todo board reply."
+    },
+    "AgentActivity": {
+      "signature": "AgentActivity(title?: string, tasks?: any[])",
+      "description": "A streaming log of what an agent actually did."
     },
     "DailyHeadline": {
       "signature": "DailyHeadline(text: string)",
@@ -65,6 +69,9 @@
       "TodoBoard": {
         "$ref": "#/$defs/TodoBoard"
       },
+      "AgentActivity": {
+        "$ref": "#/$defs/AgentActivity"
+      },
       "DailyHeadline": {
         "$ref": "#/$defs/DailyHeadline"
       },
@@ -107,6 +114,7 @@
     },
     "required": [
       "TodoBoard",
+      "AgentActivity",
       "DailyHeadline",
       "FocusPull",
       "Heading",
@@ -130,6 +138,9 @@
             "type": "array",
             "items": {
               "anyOf": [
+                {
+                  "$ref": "#/$defs/AgentActivity"
+                },
                 {
                   "$ref": "#/$defs/DailyHeadline"
                 },
@@ -163,6 +174,20 @@
         ],
         "additionalProperties": false,
         "description": "The root container: one todo board reply."
+      },
+      "AgentActivity": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "tasks": {
+            "type": "array",
+            "items": {}
+          }
+        },
+        "additionalProperties": false,
+        "description": "A streaming log of what an agent actually did."
       },
       "DailyHeadline": {
         "type": "object",

@@ -1139,3 +1139,288 @@ body,
 .todo-menu-item--delete:hover {
   background: rgba(239, 68, 68, 0.08) !important;
 }
+
+/* ==========================================================================
+   BoardUI Task List - Streaming Agent Activity Log
+   ========================================================================== */
+
+.bui-task-list-root {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 8px 18px;
+  font-family: var(--font-inter), "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+}
+
+.bui-task-list-card {
+  display: flex;
+  width: 100%;
+  max-width: 480px;
+  flex-direction: column;
+  gap: 12px;
+  background-color: var(--todo-surface);
+  border: 1px solid var(--todo-line);
+  border-radius: 12px;
+  padding: 14px 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  font-family: var(--font-inter), "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+}
+
+.bui-task-list-card * {
+  font-family: var(--font-inter), "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+}
+
+.bui-task-list-groups {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.bui-task-group {
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.bui-task-group-btn {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 8px;
+  border-radius: 6px;
+  padding: 4px 6px;
+  text-align: start;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  outline: none;
+  transition: background-color 150ms ease;
+}
+
+.bui-task-group-btn:hover {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+.bui-task-title-wrap {
+  flex: 1;
+  min-width: 0;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--todo-ink-secondary);
+}
+
+@keyframes bui-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.bui-running-title {
+  display: inline-block;
+  font-weight: 500;
+  background: linear-gradient(
+    90deg,
+    var(--todo-ink-secondary) 0%,
+    #ff2442 50%,
+    var(--todo-ink-secondary) 100%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: bui-shimmer 2.2s ease-in-out infinite;
+}
+
+.bui-settled-title {
+  color: var(--todo-ink-secondary);
+  font-weight: 500;
+}
+
+.bui-task-content {
+  overflow: hidden;
+}
+
+.bui-step-list {
+  margin-top: 2px;
+  margin-left: 8px;
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+  padding: 0;
+}
+
+@keyframes bui-step-reveal {
+  0% {
+    opacity: 0;
+    filter: blur(4px);
+    transform: translateY(4px);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0px);
+    transform: translateY(0);
+  }
+}
+
+.bui-step-item {
+  position: relative;
+  overflow: hidden;
+  padding-left: 20px;
+  animation: bui-step-reveal 280ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.bui-tree-connector {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 12px;
+  pointer-events: none;
+  color: #d1d5db;
+}
+
+.bui-branch-curve {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.bui-branch-line {
+  position: absolute;
+  left: 0.5px;
+  top: 8px;
+  bottom: 0px;
+  width: 1px;
+  background-color: currentColor;
+}
+
+.bui-step-label-row {
+  display: block;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--todo-ink-secondary);
+}
+
+.bui-chip {
+  display: inline-flex;
+  max-width: 100%;
+  transform: translateY(-1px);
+  align-items: center;
+  gap: 4px;
+  border-radius: 6px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background-color: rgba(0, 0, 0, 0.02);
+  padding: 1px 6px 1px 4px;
+  margin-left: 4px;
+  margin-right: 2px;
+  vertical-align: middle;
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--todo-ink);
+  transition: background-color 150ms ease, border-color 150ms ease;
+}
+
+.bui-chip:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.14);
+}
+
+.bui-chip-icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.bui-chip-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bui-run-again-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  align-self: flex-start;
+  border-radius: 8px;
+  border: 1px solid var(--todo-line);
+  background-color: var(--todo-surface);
+  padding: 5px 10px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--todo-ink-secondary);
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+  transition: all 150ms ease;
+  outline: none;
+}
+
+.bui-run-again-btn:hover {
+  background-color: rgba(0, 0, 0, 0.03);
+  color: var(--todo-ink);
+}
+
+/* Dark mode overrides for BoardUI Task List */
+[data-openui-theme="dark"] .bui-task-list-card,
+.openui-agent-interface[data-theme="dark"] .bui-task-list-card,
+[data-theme="dark"] .bui-task-list-card,
+.dark .bui-task-list-card {
+  background-color: rgba(255, 255, 255, 0.02);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+[data-openui-theme="dark"] .bui-task-group-btn:hover,
+.openui-agent-interface[data-theme="dark"] .bui-task-group-btn:hover,
+[data-theme="dark"] .bui-task-group-btn:hover,
+.dark .bui-task-group-btn:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+[data-openui-theme="dark"] .bui-tree-connector,
+.openui-agent-interface[data-theme="dark"] .bui-tree-connector,
+[data-theme="dark"] .bui-tree-connector,
+.dark .bui-tree-connector {
+  color: #4b5563;
+}
+
+[data-openui-theme="dark"] .bui-chip,
+.openui-agent-interface[data-theme="dark"] .bui-chip,
+[data-theme="dark"] .bui-chip,
+.dark .bui-chip {
+  border-color: rgba(255, 255, 255, 0.1);
+  background-color: rgba(255, 255, 255, 0.04);
+  color: #f3f4f6;
+}
+
+[data-openui-theme="dark"] .bui-chip:hover,
+.openui-agent-interface[data-theme="dark"] .bui-chip:hover,
+[data-theme="dark"] .bui-chip:hover,
+.dark .bui-chip:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+[data-openui-theme="dark"] .bui-run-again-btn,
+.openui-agent-interface[data-theme="dark"] .bui-run-again-btn,
+[data-theme="dark"] .bui-run-again-btn,
+.dark .bui-run-again-btn {
+  border-color: rgba(255, 255, 255, 0.08);
+  background-color: rgba(255, 255, 255, 0.03);
+  color: #9ca3af;
+}
+
+[data-openui-theme="dark"] .bui-run-again-btn:hover,
+.openui-agent-interface[data-theme="dark"] .bui-run-again-btn:hover,
+[data-theme="dark"] .bui-run-again-btn:hover,
+.dark .bui-run-again-btn:hover {
+  background-color: rgba(255, 255, 255, 0.06);
+  color: #f3f4f6;
+}

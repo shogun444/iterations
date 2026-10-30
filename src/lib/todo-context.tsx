@@ -16,6 +16,17 @@ export type TodoTask = {
   source?: "card" | "list" | "calendar" | "user";
 };
 
+export type ActivityEvent = {
+  id: string;
+  timestamp: number;
+  type: "create" | "edit" | "delete" | "toggle" | "reorder";
+  label: string;
+  chips?: Array<{
+    label: string;
+    icon?: "code" | "file" | "calendar" | "check" | "tag" | "react";
+  }>;
+};
+
 export type TodoContextValue = {
   tasks: TodoTask[];
   selectedDate: string; // "YYYY-MM-DD"
@@ -29,6 +40,8 @@ export type TodoContextValue = {
   markedDates: Set<string>;
   tasksByDate: Record<string, TodoTask[]>;
   isPastDate: (dateStr: string) => boolean;
+  activityEvents: ActivityEvent[];
+  addActivityEvent: (event: Omit<ActivityEvent, "id" | "timestamp">) => void;
 };
 
 const TodoContext = createContext<TodoContextValue | null>(null);
@@ -108,15 +121,36 @@ export function TodoProvider({
   defaultDate?: string;
 }) {
   const [tasks, setTasks] = useState<TodoTask[]>(initialTasks);
+  const [activityEvents, setActivityEvents] = useState<ActivityEvent[]>([]);
   const todayStr = useMemo(() => toIsoDate(new Date()), []);
   const initialDate = defaultDate && defaultDate >= todayStr ? defaultDate : todayStr;
   const [selectedDate, setSelectedDate] = useState<string>(initialDate);
 
-  const toggleTask = useCallback((id: string) => {
-    setTasks((prev) =>
-      prev.map((t) => (t.id === id ? { ...t, done: !t.done } : t))
-    );
+  const addActivityEvent = useCallback((event: Omit<ActivityEvent, "id" | "timestamp">) => {
+    const newEvent: ActivityEvent = {
+      ...event,
+      id: `act-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+      timestamp: Date.now(),
+    };
+    setActivityEvents((prev) => [newEvent, ...prev.slice(0, 19)]);
   }, []);
+
+  const toggleTask = useCallback((id: string) => {
+    setTasks((prev) => {
+      const target = prev.find((t) => t.id === id);
+      if (target) {
+        addActivityEvent({
+          type: "toggle",
+          label: !target.done ? "Completed task" : "Reopened task",
+          chips: [
+            { label: target.title, icon: "check" },
+            { label: !target.done ? "Done" : "Active", icon: "tag" },
+          ],
+        });
+      }
+      return prev.map((t) => (t.id === id ? { ...t, done: !t.done } : t));
+    });
+  }, [addActivityEvent]);
 
   const addTask = useCallback(
     (title: string, date?: string, priority: TodoPriority = "not priority", due?: string, note?: string) => {
@@ -136,21 +170,47 @@ export function TodoProvider({
         source: "user",
       };
       setTasks((prev) => [...prev, newTask]);
+      addActivityEvent({
+        type: "create",
+        label: "Created task",
+        chips: [
+          { label: title, icon: "file" },
+          { label: taskDate === todayStr ? "Today" : taskDate, icon: "calendar" },
+        ],
+      });
     },
-    [selectedDate, todayStr]
+    [selectedDate, todayStr, addActivityEvent]
   );
 
   const editTask = useCallback((id: string, newTitle: string) => {
     const trimmed = newTitle.trim();
     if (!trimmed) return;
-    setTasks((prev) =>
-      prev.map((t) => (t.id === id ? { ...t, title: trimmed } : t))
-    );
-  }, []);
+    setTasks((prev) => {
+      const target = prev.find((t) => t.id === id);
+      if (target && target.title !== trimmed) {
+        addActivityEvent({
+          type: "edit",
+          label: "Updated task",
+          chips: [{ label: trimmed, icon: "file" }],
+        });
+      }
+      return prev.map((t) => (t.id === id ? { ...t, title: trimmed } : t));
+    });
+  }, [addActivityEvent]);
 
   const deleteTask = useCallback((id: string) => {
-    setTasks((prev) => prev.filter((t) => t.id !== id));
-  }, []);
+    setTasks((prev) => {
+      const target = prev.find((t) => t.id === id);
+      if (target) {
+        addActivityEvent({
+          type: "delete",
+          label: "Removed task",
+          chips: [{ label: target.title, icon: "file" }],
+        });
+      }
+      return prev.filter((t) => t.id !== id);
+    });
+  }, [addActivityEvent]);
 
   const reorderTasks = useCallback((sourceId: string, targetId: string) => {
     if (sourceId === targetId) return;
@@ -162,9 +222,28 @@ export function TodoProvider({
       const updated = [...prev];
       const [moved] = updated.splice(sourceIdx, 1);
       updated.splice(targetIdx, 0, moved);
+
+      // If dragged to the top position, it becomes featured on calendar
+      if (targetIdx === 0) {
+        addActivityEvent({
+          type: "reorder",
+          label: "Prioritized to top",
+          chips: [
+            { label: moved.title, icon: "tag" },
+            { label: "Featured on calendar", icon: "calendar" },
+          ],
+        });
+      } else {
+        addActivityEvent({
+          type: "reorder",
+          label: "Reordered priority",
+          chips: [{ label: moved.title, icon: "tag" }],
+        });
+      }
+
       return updated;
     });
-  }, []);
+  }, [addActivityEvent]);
 
   const markedDates = useMemo(() => {
     const set = new Set<string>();
@@ -200,6 +279,8 @@ export function TodoProvider({
       markedDates,
       tasksByDate,
       isPastDate: isPast,
+      activityEvents,
+      addActivityEvent,
     }),
     [
       tasks,
@@ -214,6 +295,8 @@ export function TodoProvider({
       markedDates,
       tasksByDate,
       isPast,
+      activityEvents,
+      addActivityEvent,
     ]
   );
 

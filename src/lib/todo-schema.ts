@@ -33,6 +33,7 @@ export const todoProps = {
 };
 
 export const todoBlocks = [
+  "AgentActivity",
   "DailyHeadline",
   "FocusPull",
   "Heading",
@@ -58,6 +59,15 @@ export function buildTodoLibrary(views: Views) {
 
   const block = (name: (typeof todoBlocks)[number], shape: z.ZodObject, description: string) =>
     defineComponent({ name, props: shape, description, component: views[name] });
+
+  const AgentActivity = block(
+    "AgentActivity",
+    z.object({
+      title: z.string().optional().describe("Summary of what agent did"),
+      tasks: z.array(z.any()).optional().describe("List of task activities"),
+    }),
+    "A streaming log of what an agent actually did.",
+  );
 
   const DailyHeadline = block(
     "DailyHeadline",
@@ -132,7 +142,7 @@ export function buildTodoLibrary(views: Views) {
     "Tappable pills for what to do or ask next.",
   );
 
-  const all = [DailyHeadline, FocusPull, Heading, TaskList, TodoCalendar, StatsRow, Question, FollowUps];
+  const all = [AgentActivity, DailyHeadline, FocusPull, Heading, TaskList, TodoCalendar, StatsRow, Question, FollowUps];
 
   const TodoBoard = defineComponent({
     name: "TodoBoard",

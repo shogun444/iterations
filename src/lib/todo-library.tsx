@@ -14,7 +14,6 @@ import {
   type TodoTask,
   type TodoPriority,
 } from "./todo-context";
-import { TaskList as BoardUITaskList, type AgentTask } from "../components/application/task-list/task-list";
 import "../drawably/style.css";
 import "../app/todo.css";
 
@@ -983,10 +982,10 @@ function extractInitialTasks(blocks: unknown[]): {
     if (typeName === "TaskList" && props?.items) {
       const itemList = list(props.items);
       const isMultiDayOrSplit =
-        /split|ppl|workout|\b\d+-day\b|routine|sprint|multi-day/i.test(`${headlineText} ${listTitle}`) ||
+        /split|ppl|workout|\b\d+-day\b|routine|sprint|multi-day|gym|chest|back|legs|rest/i.test(`${headlineText} ${listTitle}`) ||
         itemList.some((item) => {
           const ip = getBlockProps(item);
-          return /day\s*\d+|push|pull|legs|upper|lower/i.test(ip?.title || "");
+          return /day\s*\d+|push|pull|legs|upper|lower|chest|back|bicep|tricep|squat|rest/i.test(ip?.title || "");
         });
 
       for (let i = 0; i < itemList.length; i++) {
@@ -1031,122 +1030,8 @@ function extractInitialTasks(blocks: unknown[]): {
   return { tasks, headlineDate, hasCalendar };
 }
 
-function AgentActivityView({
-  blocks = [],
-}: {
-  blocks?: unknown[];
-}) {
-  const todoCtx = useTodoContext();
-
-  // Extract info from blocks
-  const blockList = list(blocks);
-  let headlineText = "";
-  let focusText = "";
-  let listTasks: TodoTask[] = [];
-
-  for (const b of blockList) {
-    const typeName = getBlockTypeName(b);
-    const props = getBlockProps(b);
-    if (typeName === "DailyHeadline" && props?.text) {
-      headlineText = props.text.replace(/==([^=]+)==/g, "$1").replace(/_([^_]+)_/g, "$1").trim();
-    }
-    if (typeName === "FocusPull" && props?.text) {
-      focusText = props.text.replace(/==([^=]+)==/g, "$1").replace(/_([^_]+)_/g, "$1").trim();
-    }
-    if (typeName === "TaskList" && props?.items) {
-      const items = list(props.items);
-      for (const item of items) {
-        const ip = getBlockProps(item);
-        if (ip?.title) {
-          listTasks.push({
-            id: ip.id || `item-${listTasks.length}`,
-            title: ip.title,
-            done: !!ip.done,
-            priority: ip.priority,
-            due: ip.due,
-            date: ip.due ? parseDateFromText(ip.due) : toIsoDate(new Date()),
-          });
-        }
-      }
-    }
-  }
-
-  // Active tasks from context or direct list
-  const activeTasks = todoCtx?.tasks && todoCtx.tasks.length > 0 ? todoCtx.tasks : listTasks;
-  const activityEvents = todoCtx?.activityEvents || [];
-
-  const tasks: AgentTask[] = useMemo(() => {
-    const groups: AgentTask[] = [];
-
-    // Group 1: Analysis & Priorities
-    groups.push({
-      id: "found-priorities",
-      title: "Found project priorities",
-      runningTitle: "Searching project priorities & focus",
-      icon: "search",
-      steps: [
-        {
-          label: "Identified headline rocks",
-          chips: [{ label: headlineText || "Executive Priorities", icon: "file" }],
-        },
-        ...(focusText
-          ? [
-              {
-                label: "Focus block",
-                chips: [
-                  {
-                    label: focusText.length > 34 ? `${focusText.slice(0, 34)}...` : focusText,
-                    icon: "file" as const,
-                  },
-                ],
-              },
-            ]
-          : []),
-        { label: "Scanning schedule for upcoming deadlines" },
-      ],
-    });
-
-    // Group 2: Board & Calendar Setup
-    const taskSteps = activeTasks.slice(0, 3).map((t) => ({
-      label: "Created",
-      chips: [
-        { label: t.title, icon: "file" as const },
-        ...(t.due ? [{ label: t.due, icon: "calendar" as const }] : []),
-      ],
-    }));
-
-    groups.push({
-      id: "configured-board",
-      title: "Configured task board & calendar",
-      runningTitle: "Building task list & scheduling calendar",
-      icon: "edit",
-      steps: [
-        ...taskSteps,
-        {
-          label: "Synchronized interactive calendar",
-          chips: [{ label: `${activeTasks.length} scheduled`, icon: "calendar" }],
-        },
-      ],
-    });
-
-    // Group 3: User live interactions (when user creates, edits, deletes, toggles, or reorders)
-    if (activityEvents.length > 0) {
-      groups.push({
-        id: "user-updates",
-        title: "User interactions & board updates",
-        runningTitle: "Applying changes to task list & calendar",
-        icon: "check",
-        steps: activityEvents.slice(0, 6).map((evt) => ({
-          label: evt.label,
-          chips: evt.chips,
-        })),
-      });
-    }
-
-    return groups;
-  }, [headlineText, focusText, activeTasks, activityEvents]);
-
-  return <BoardUITaskList tasks={tasks} />;
+function AgentActivityView() {
+  return null;
 }
 
 function TodoBoardInner({
@@ -1161,15 +1046,9 @@ function TodoBoardInner({
   const explicitCalendarInBlocks = blocks.some((b: any) => getBlockTypeName(b) === "TodoCalendar");
   const hasCalendar = hasExplicitCalendar || explicitCalendarInBlocks;
   const hasTaskList = blocks.some((b: any) => getBlockTypeName(b) === "TaskList");
-  const hasAgentActivity = blocks.some((b: any) => getBlockTypeName(b) === "AgentActivity");
 
   return (
     <div className="todo-board-container">
-      {/* BoardUI Task List - streaming log of what the agent did above the working board */}
-      {!hasAgentActivity && (
-        <AgentActivityView blocks={blocks} />
-      )}
-
       {blocks.map((node, i) => {
         const isTaskList = getBlockTypeName(node) === "TaskList";
         return (

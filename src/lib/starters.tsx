@@ -2,8 +2,8 @@ export const OPENUI_LOGO = "/openui-logo.svg";
 
 export const STARTERS = [
   {
-    displayText: "3-day gym workout session",
-    prompt: "Plan a 3-day gym workout session with Push, Pull, and Legs scheduled across consecutive days.",
+    displayText: "PPL gym split: Push, Pull, Legs & Rest",
+    prompt: "Plan a gym workout split: Push (chest & triceps), Pull (back & biceps), Legs (squats), and Rest day scheduled across consecutive days.",
   },
   {
     displayText: "Plan my day around 3 critical tasks",

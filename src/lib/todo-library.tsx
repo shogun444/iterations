@@ -97,32 +97,27 @@ function HeadlineHairpinUnderline({
     return () => ro.disconnect();
   }, [primaryText, trailingText]);
 
-  const xStart = 22; // matches padding-left: 22px
   const primaryW = metrics.primaryW || (metrics.containerW ? metrics.containerW * 0.8 : 0);
   const textH = metrics.primaryH || metrics.containerH;
 
   // Hand-drawn folded hairpin underline matching user's reference:
-  // 1. Never clipped: apex sits safely inside at x = 4px (well inside [0, 22px] padding space).
-  // 2. Length terminates right past the primary text (e.g. right past 'y' in Recovery, leaving 'Split' clean).
+  // 1. Left edge aligns with the first letter '4' (xApex = 0).
+  // 2. Length terminates right past the primary text (e.g. right past 'PPL', leaving 'Split' un-underlined).
   // 3. Fluid calligraphic inflection with subtle natural bow instead of being dead-straight.
   const pathD = useMemo(() => {
     if (primaryW <= 0 || textH <= 0) return "";
-    const xApex = 4;
-    const xTurnStart = xStart - 3;
-    const xTurnExit = xStart - 1;
-    const xRightTop = xStart + primaryW + 8;
-    const xRightBottom = xStart + primaryW - 32;
+    const xRightTop = primaryW + 4;
+    const xRightBottom = Math.max(primaryW - 24, primaryW * 0.82);
 
     const yTop = textH + 2;
-    const gap = 5.4;
+    const gap = 5.2;
     const yBottom = yTop + gap;
-    const span = primaryW;
 
     return [
-      `M ${xRightBottom.toFixed(1)},${(yBottom + 0.8).toFixed(1)}`,
-      `C ${(xStart + span * 0.65).toFixed(1)},${(yBottom + 1.6).toFixed(1)} ${(xStart + span * 0.25).toFixed(1)},${(yBottom - 0.2).toFixed(1)} ${xTurnStart.toFixed(1)},${yBottom.toFixed(1)}`,
-      `C ${(xApex).toFixed(1)},${(yBottom + 1.2).toFixed(1)} ${(xApex).toFixed(1)},${(yTop - 1.2).toFixed(1)} ${xTurnExit.toFixed(1)},${yTop.toFixed(1)}`,
-      `C ${(xStart + span * 0.35).toFixed(1)},${(yTop + 1.6).toFixed(1)} ${(xStart + span * 0.72).toFixed(1)},${(yTop - 0.8).toFixed(1)} ${xRightTop.toFixed(1)},${(yTop - 1.0).toFixed(1)}`,
+      `M ${xRightBottom.toFixed(1)},${(yBottom + 0.6).toFixed(1)}`,
+      `C ${(primaryW * 0.6).toFixed(1)},${(yBottom + 1.2).toFixed(1)} ${(primaryW * 0.25).toFixed(1)},${(yBottom - 0.2).toFixed(1)} 8.0,${yBottom.toFixed(1)}`,
+      `C 0.0,${(yBottom + 0.8).toFixed(1)} 0.0,${(yTop - 0.8).toFixed(1)} 8.0,${yTop.toFixed(1)}`,
+      `C ${(primaryW * 0.4).toFixed(1)},${(yTop + 1.2).toFixed(1)} ${(primaryW * 0.75).toFixed(1)},${(yTop - 0.6).toFixed(1)} ${xRightTop.toFixed(1)},${(yTop - 0.8).toFixed(1)}`,
     ].join(" ");
   }, [primaryW, textH]);
 

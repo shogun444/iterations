@@ -141,24 +141,12 @@ export async function POST(req: Request) {
           for (let i = 0; i < lines.length; i++) {
             if (req.signal.aborted) break;
             const line = lines[i];
-            const words = line.split(" ");
-            for (let w = 0; w < words.length; w++) {
-              if (req.signal.aborted) break;
-              writer.write({
-                type: "text-delta",
-                id: "oui-1-msg",
-                delta: words[w] + (w < words.length - 1 ? " " : ""),
-              });
-              await new Promise((resolve) => setTimeout(resolve, 16));
-            }
-            if (i < lines.length - 1 && !req.signal.aborted) {
-              writer.write({
-                type: "text-delta",
-                id: "oui-1-msg",
-                delta: "\n",
-              });
-              await new Promise((resolve) => setTimeout(resolve, 75));
-            }
+            writer.write({
+              type: "text-delta",
+              id: "oui-1-msg",
+              delta: line + (i < lines.length - 1 ? "\n" : ""),
+            });
+            await new Promise((resolve) => setTimeout(resolve, 85));
           }
 
           writer.write({ type: "text-end", id: "oui-1-msg" });

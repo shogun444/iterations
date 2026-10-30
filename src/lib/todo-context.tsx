@@ -14,6 +14,7 @@ export type TodoTask = {
   note?: string;
   date: string; // ISO date "YYYY-MM-DD"
   source?: "card" | "list" | "calendar" | "user";
+  editedByUser?: boolean;
 };
 
 export type ActivityEvent = {
@@ -149,7 +150,9 @@ export function TodoProvider({
           return {
             ...initT,
             done: existing.done,
-            title: existing.title,
+            title: existing.editedByUser ? existing.title : initT.title,
+            note: existing.editedByUser ? existing.note : (initT.note || existing.note),
+            editedByUser: existing.editedByUser,
           };
         }
         return initT;
@@ -232,7 +235,7 @@ export function TodoProvider({
           chips: [{ label: trimmed, icon: "file" }],
         });
       }
-      return prev.map((t) => (t.id === id ? { ...t, title: trimmed } : t));
+      return prev.map((t) => (t.id === id ? { ...t, title: trimmed, editedByUser: true } : t));
     });
   }, [addActivityEvent]);
 

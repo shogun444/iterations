@@ -2,12 +2,12 @@ export const OPENUI_LOGO = "/openui-logo.svg";
 
 export const STARTERS = [
   {
-    displayText: "Plan my day around 3 critical tasks",
-    prompt: "Plan my day around 3 critical high-impact tasks, plus a few quick wins and an afternoon focus block.",
+    displayText: "3-day gym workout session",
+    prompt: "Plan a 3-day gym workout session with Push, Pull, and Legs scheduled across consecutive days.",
   },
   {
-    displayText: "Sprint launch checklist",
-    prompt: "Create a product launch sprint board with urgent deploy items, marketing copy tasks, and a QA list.",
+    displayText: "Plan my day around 3 critical tasks",
+    prompt: "Plan my day around 3 critical high-impact tasks, plus a few quick wins and an afternoon focus block.",
   },
   {
     displayText: "Organize deep work & errands",

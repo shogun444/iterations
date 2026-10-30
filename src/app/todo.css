@@ -57,6 +57,22 @@ body,
   font-family: var(--font-display), "Timeless Serif", Georgia, serif !important;
 }
 
+/* Home Page Conversation Starters & Starter Cards — Inter Font */
+.openui-agent-welcome,
+.openui-agent-welcome *,
+.openui-agent-welcome__title,
+.openui-agent-conversation-starter,
+.openui-agent-conversation-starter *,
+.openui-agent-conversation-starter-item-card,
+.openui-agent-conversation-starter-item-card *,
+.openui-agent-conversation-starter-item-card__text,
+.openui-agent-conversation-starter-item-short,
+.openui-agent-conversation-starter-item-short *,
+.openui-agent-conversation-starter-item-long,
+.openui-agent-conversation-starter-item-long * {
+  font-family: var(--font-inter), "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+}
+
 /* Make messages look like magazine spreads */
 .todo-board-container {
   display: flex;

@@ -31,20 +31,23 @@ function sanitizeOpenUIProgram(rawCode: string): string {
   // 1. Remove markdown fences if model added them
   lines = lines.filter((l) => !l.startsWith("```"));
 
-  // 2. Discard any unfinished trailing line (must end with closing parenthesis)
+  // 2. Strip any TaskCard or TaskCards statements (cards are completely removed)
+  lines = lines.filter((l) => !/=\s*TaskCard\s*\(/.test(l) && !/=\s*TaskCards\s*\(/.test(l));
+
+  // 3. Discard any unfinished trailing line (must end with closing parenthesis)
   lines = lines.filter((l) => /\)\s*$/.test(l));
 
-  // 3. Fix duplicate trailing double quotes e.g. `=="")` -> `==")`
+  // 4. Fix duplicate trailing double quotes e.g. `=="")` -> `==")`
   lines = lines.map((l) => l.replace(/""\)/g, '")'));
 
-  // 4. Collect all defined statement IDs (e.g. `headline = ...`, `c1 = ...`)
+  // 5. Collect all defined statement IDs (e.g. `headline = ...`, `list = ...`)
   const defined = new Set<string>();
   for (const l of lines) {
     const m = l.match(/^([a-zA-Z_]\w*)\s*=/);
     if (m) defined.add(m[1]);
   }
 
-  // 5. Clean references in arrays: e.g. [headline, focus, cards, list, follow] -> remove undefined ones
+  // 6. Clean references in arrays: e.g. [headline, focus, cards, list, follow] -> remove undefined ones
   const sanitizedLines = lines.map((line) => {
     return line.replace(/\[(.*?)\]/g, (_match, inner) => {
       const items = inner

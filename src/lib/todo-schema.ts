@@ -19,11 +19,11 @@ export const todoProps = {
   }),
   TaskCard: z.object({
     id: z.string().describe("Short ID, e.g. 'card1'"),
-    title: z.string().describe("Task description, may use ==highlight== or _underline_"),
+    title: z.string().describe("Task description"),
     priority: z.enum(priorities).describe("Urgency level"),
-    due: z.string().optional().describe("Due time or deadline, e.g. '2h left', 'Today 5pm'"),
-    tag: z.string().optional().describe("Category label, e.g. 'Product', 'Dev', 'Admin'"),
-    note: z.string().optional().describe("Handwritten tip, 2 to 5 words, lower case"),
+    due: z.string().optional().describe("Due time or deadline"),
+    tag: z.string().optional().describe("Category label"),
+    note: z.string().optional().describe("Handwritten tip"),
   }),
   StatCard: z.object({
     label: z.string().describe("What is measured, e.g. 'High Priority', 'Completed'"),
@@ -36,8 +36,8 @@ export const todoBlocks = [
   "DailyHeadline",
   "FocusPull",
   "Heading",
-  "TaskCards",
   "TaskList",
+  "TodoCalendar",
   "StatsRow",
   "Question",
   "FollowUps",
@@ -45,7 +45,7 @@ export const todoBlocks = [
 
 type Views = {
   [K in keyof typeof todoProps]: ComponentRenderer<z.infer<(typeof todoProps)[K]>>;
-} & Record<(typeof todoBlocks)[number] | "TodoBoard", ComponentRenderer<never>>;
+} & Record<(typeof todoBlocks)[number] | "TodoBoard" | "TaskCards", ComponentRenderer<never>>;
 
 export function buildTodoLibrary(views: Views) {
   const part = <K extends keyof typeof todoProps>(name: K, description: string) =>
@@ -53,7 +53,7 @@ export function buildTodoLibrary(views: Views) {
 
   const Option = part("Option", "A tappable quick reply action.");
   const TaskItem = part("TaskItem", "A single row item inside a TaskList.");
-  const TaskCard = part("TaskCard", "A physical tilted card for a highlight task.");
+  const TaskCard = part("TaskCard", "Deprecated: do NOT use.");
   const StatCard = part("StatCard", "A small status summary metric.");
 
   const block = (name: (typeof todoBlocks)[number], shape: z.ZodObject, description: string) =>
@@ -82,11 +82,12 @@ export function buildTodoLibrary(views: Views) {
     "A section heading.",
   );
 
-  const TaskCards = block(
-    "TaskCards",
-    z.object({ cards: z.array(TaskCard.ref).describe("2 to 4 highlight task cards") }),
-    "A grid of physical, slightly tilted cards for prominent tasks.",
-  );
+  const TaskCards = defineComponent({
+    name: "TaskCards",
+    props: z.object({ cards: z.array(z.any()).optional() }),
+    description: "Deprecated: do NOT use. Cards are removed.",
+    component: views.TaskCards as never,
+  });
 
   const TaskList = block(
     "TaskList",
@@ -95,6 +96,17 @@ export function buildTodoLibrary(views: Views) {
       items: z.array(TaskItem.ref).describe("3 to 6 task items"),
     }),
     "An interactive checklist of tasks.",
+  );
+
+  const TodoCalendar = block(
+    "TodoCalendar",
+    z.object({
+      title: z.string().optional().describe("Schedule or month title, e.g. 'Schedule & Deadlines'"),
+      selectedDate: z.string().optional().describe("Selected ISO date 'YYYY-MM-DD'"),
+      markedDates: z.array(z.string()).optional().describe("Dates with scheduled tasks 'YYYY-MM-DD'"),
+      note: z.string().optional().describe("Handwritten tip, 2 to 6 words"),
+    }),
+    "An interactive monthly calendar marking dates that have scheduled todos.",
   );
 
   const StatsRow = block(
@@ -120,7 +132,7 @@ export function buildTodoLibrary(views: Views) {
     "Tappable pills for what to do or ask next.",
   );
 
-  const all = [DailyHeadline, FocusPull, Heading, TaskCards, TaskList, StatsRow, Question, FollowUps];
+  const all = [DailyHeadline, FocusPull, Heading, TaskList, TodoCalendar, StatsRow, Question, FollowUps];
 
   const TodoBoard = defineComponent({
     name: "TodoBoard",
@@ -133,15 +145,14 @@ export function buildTodoLibrary(views: Views) {
 
   return createLibrary<ComponentRenderer<any>>({
     root: "TodoBoard",
-    components: [TodoBoard, ...all, Option, TaskItem, TaskCard, StatCard] as never[],
+    components: [TodoBoard, ...all, Option, TaskItem, StatCard, TaskCard, TaskCards] as never[],
   });
 }
 
 export const todoSpec = () => {
   const none = () => null;
   const views = Object.fromEntries(
-    [...todoBlocks, "TodoBoard", ...Object.keys(todoProps)].map((k) => [k, none]),
+    [...todoBlocks, "TaskCards", "TodoBoard", ...Object.keys(todoProps)].map((k) => [k, none]),
   );
   return buildTodoLibrary(views as unknown as Views).toSpec();
 };
-

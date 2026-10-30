@@ -1,4 +1,11 @@
 import localFont from "next/font/local";
+import { Inter } from "next/font/google";
+
+export const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+});
 
 export const displaySerif = localFont({
   src: [
@@ -16,4 +23,3 @@ export const uiSans = localFont({
   display: "swap",
   fallback: ["system-ui", "sans-serif"],
 });
-

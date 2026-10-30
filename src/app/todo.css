@@ -2,7 +2,7 @@
 @import "../drawably/style.css";
 
 :root {
-  --todo-coral: #ff5364;
+  --todo-coral: #ff2442;
   --todo-emerald: #10b980;
   --todo-amber: #feb600;
   --todo-indigo: #6366f1;
@@ -70,15 +70,76 @@ body,
 }
 
 /* 1. Daily Headline */
+.todo-headline,
+.todo-headline-text {
+  color: var(--todo-ink) !important;
+  font-family: var(--font-inter), "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+}
+
 .todo-headline {
   margin: 0;
-  font-family: var(--font-display), "Timeless Serif", Georgia, serif;
-  font-size: clamp(34px, 5.2vw, 52px);
-  font-weight: 380;
-  line-height: 1.08;
+  font-family: var(--font-inter), "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+  font-size: clamp(32px, 4.8vw, 48px);
+  font-weight: 700;
+  line-height: 1.12;
   letter-spacing: -0.03em;
   text-wrap: balance;
   color: var(--todo-ink);
+}
+
+.todo-headline-double-wrap {
+  position: relative;
+  display: inline-block;
+  padding-bottom: 14px;
+}
+
+.todo-headline-text {
+  position: relative;
+  z-index: 1;
+}
+
+.todo-headline-double-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  pointer-events: none;
+  overflow: visible;
+  z-index: 0;
+  color: #404040; /* light mode: neutral-700 */
+}
+
+.todo-headline-double-svg path {
+  stroke: currentColor;
+}
+
+/* In dark mode: #f3f4f6 */
+[data-theme="dark"] .todo-headline-double-svg,
+[data-openui-theme="dark"] .todo-headline-double-svg,
+.dark .todo-headline-double-svg,
+.openui-agent-interface[data-theme="dark"] .todo-headline-double-svg {
+  color: #f3f4f6 !important;
+}
+
+[data-theme="dark"] .todo-headline-double-svg path,
+[data-openui-theme="dark"] .todo-headline-double-svg path,
+.dark .todo-headline-double-svg path,
+.openui-agent-interface[data-theme="dark"] .todo-headline-double-svg path {
+  stroke: #f3f4f6 !important;
+}
+
+[data-theme="dark"] .drawably-underline .drawably-svg path,
+[data-openui-theme="dark"] .drawably-underline .drawably-svg path,
+.dark .drawably-underline .drawably-svg path,
+.openui-agent-interface[data-theme="dark"] .drawably-underline .drawably-svg path {
+  stroke: #f3f4f6 !important;
+}
+
+.todo-ordinal-sup {
+  font-size: 0.62em;
+  vertical-align: super;
+  line-height: 0;
+  margin-left: 1px;
 }
 
 /* 2. Focus Pull — Open editorial statement, NOT a card */
@@ -92,13 +153,15 @@ body,
   margin: -6px 0 2px;
 }
 
-.todo-focus-text {
+.todo-focus-text,
+.todo-focus-text * {
   margin: 0;
-  font-family: var(--font-hand), cursive;
-  font-size: 26px;
-  line-height: 1.2;
-  letter-spacing: 0.01em;
-  color: var(--todo-ink);
+  font-family: var(--font-inter), "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+  font-size: 19px;
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+  color: #404040 !important; /* text-neutral-700 */
   text-wrap: balance;
 }
 
@@ -109,53 +172,54 @@ body,
   font-size: 26px;
   line-height: 1;
   color: var(--todo-note-neutral);
-  rotate: -2deg;
 }
 
 /* 3. Section Heading */
 .todo-heading {
   margin: 12px 0 -8px;
-  font-family: var(--font-display), "Timeless Serif", Georgia, serif;
-  font-size: 24px;
-  font-weight: 400;
-  letter-spacing: -0.01em;
+  font-family: var(--font-inter), "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
   color: var(--todo-ink);
 }
 
-/* 4. Task Cards Grid */
-.todo-cards-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 20px;
+/* 4. Task Cards Grid — Straight alignment, NO border, soft elevation */
+/* Cards removed per user request */
+.todo-cards-grid,
+.todo-card-wrapper,
+.todo-card {
+  display: none !important;
 }
 
-/* Physical floating card with subtle tilt */
+/* Physical white rounded card without plain border */
 .todo-card {
   position: relative;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  min-height: 150px;
-  padding: 20px;
-  background: var(--todo-surface);
-  border: 1px solid var(--todo-line);
-  border-radius: 16px;
-  box-shadow: 0 8px 24px -10px rgba(0, 0, 0, 0.08);
-  rotate: var(--tilt, 0deg);
-  transition: transform 380ms cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 380ms ease, rotate 380ms ease;
+  width: 100%;
+  min-height: 156px;
+  padding: 22px 24px;
+  background: #ffffff !important;
+  border: none !important;
+  outline: none !important;
+  border-radius: 22px !important;
+  box-shadow: 0 10px 32px -4px rgba(0, 0, 0, 0.05), 0 4px 12px -2px rgba(0, 0, 0, 0.02) !important;
+  rotate: 0deg !important;
+  transition: transform 220ms ease, box-shadow 220ms ease;
   cursor: pointer;
   color: var(--todo-ink);
 }
 
 .todo-card:hover {
   rotate: 0deg !important;
-  transform: translateY(-4px);
-  box-shadow: 0 14px 30px -10px rgba(0, 0, 0, 0.16);
+  transform: translateY(-3px);
+  box-shadow: 0 14px 40px -4px rgba(0, 0, 0, 0.08), 0 6px 18px -2px rgba(0, 0, 0, 0.03) !important;
 }
 
 .todo-card.is-done {
-  opacity: 0.5;
-  background: rgba(125, 125, 125, 0.05);
+  opacity: 0.55;
 }
 
 .todo-card.is-done .todo-card-title {
@@ -174,12 +238,12 @@ body,
 .todo-badge {
   display: inline-flex;
   align-items: center;
-  padding: 3px 9px;
+  padding: 3px 10px;
   border-radius: 9999px;
   font-size: 11px;
   font-weight: 500;
   text-transform: lowercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.03em;
   font-family: var(--font-display), "Timeless Serif", Georgia, serif;
 }
 
@@ -188,7 +252,7 @@ body,
 .todo-badge--high {
   background: rgba(234, 88, 12, 0.1);
   color: #c2410c;
-  border: 1px solid rgba(234, 88, 12, 0.22);
+  border: none;
 }
 
 .todo-badge--not-priority,
@@ -196,7 +260,7 @@ body,
 .todo-badge--low {
   background: rgba(107, 114, 128, 0.09);
   color: #4b5563;
-  border: 1px solid rgba(107, 114, 128, 0.18);
+  border: none;
 }
 
 .todo-card-tag {
@@ -208,7 +272,7 @@ body,
 
 .todo-card-title {
   margin: 0 0 12px;
-  font-family: var(--font-display), "Timeless Serif", Georgia, serif;
+  font-family: var(--font-display), "Timeless Serif", Georgia, serif !important;
   font-size: 20px;
   line-height: 1.28;
   color: var(--todo-ink);
@@ -225,10 +289,8 @@ body,
 .todo-card-due {
   font-size: 13px;
   color: var(--todo-ink-secondary);
-  display: flex;
-  align-items: center;
-  gap: 5px;
   font-family: var(--font-display), "Timeless Serif", Georgia, serif;
+  display: inline-block;
 }
 
 .todo-card-note {
@@ -236,16 +298,16 @@ body,
   font-size: 24px;
   line-height: 1;
   color: var(--todo-note-neutral);
-  rotate: -2deg;
 }
 
-/* 5. Task List */
+/* 5. Quick Wins / Task List — Hand-drawn font for ALL items matching reference image */
 .todo-tasklist {
-  background: var(--todo-surface);
-  border: 1px solid var(--todo-line);
-  border-radius: 16px;
-  padding: 18px 22px;
-  box-shadow: 0 4px 18px -8px rgba(0, 0, 0, 0.05);
+  background: #ffffff !important;
+  border: none !important;
+  outline: none !important;
+  border-radius: 14px 14px 10px 10px !important;
+  padding: 24px 28px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03), 0 1px 2px rgba(0, 0, 0, 0.02) !important;
   color: var(--todo-ink);
 }
 
@@ -253,38 +315,39 @@ body,
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--todo-line);
+  padding-bottom: 10px;
+  border-bottom: none !important;
   margin-bottom: 8px;
 }
 
 .todo-tasklist-title {
   margin: 0;
-  font-family: var(--font-display), "Timeless Serif", Georgia, serif;
-  font-size: clamp(22px, 3.2vw, 28px);
-  font-weight: 380;
-  letter-spacing: -0.025em;
+  font-family: var(--font-inter), "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+  font-size: clamp(22px, 3vw, 26px);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
   color: var(--todo-ink);
 }
 
 .todo-tasklist-items {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 6px;
 }
 
 .todo-tasklist-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 8px;
-  border-radius: 8px;
+  padding: 8px 10px;
+  border-radius: 12px;
   transition: background 180ms ease;
   cursor: pointer;
 }
 
 .todo-tasklist-item:hover {
-  background: rgba(125, 125, 125, 0.05);
+  background: rgba(0, 0, 0, 0.03);
 }
 
 .todo-tasklist-left {
@@ -294,30 +357,48 @@ body,
   flex: 1;
 }
 
+/* Pure CSS Checkbox without SVGs */
 .todo-checkbox {
-  width: 19px;
-  height: 19px;
+  width: 18px;
+  height: 18px;
   border-radius: 5px;
-  border: 1.5px solid var(--todo-line);
+  border: 1.5px solid rgba(0, 0, 0, 0.22);
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 180ms ease;
   flex-shrink: 0;
-  background: var(--todo-surface);
+  background: transparent;
+  position: relative;
 }
 
 .todo-checkbox.checked {
   background: var(--todo-ink);
   border-color: var(--todo-ink);
-  color: var(--todo-surface);
 }
 
-/* Handwritten font used for all todo items, matching the notes */
+.todo-checkbox.checked::after {
+  content: "";
+  display: block;
+  width: 4px;
+  height: 8px;
+  border: solid #ffffff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+  margin-bottom: 2px;
+}
+
+/* Quick Wins: use the handwritten font (Reenie Beanie) for ALL text elements */
+.todo-tasklist-items,
+.todo-tasklist-item,
+.todo-tasklist-item span,
 .todo-tasklist-title-text {
-  font-family: var(--font-hand), cursive;
-  font-size: 25px;
-  line-height: 1.1;
+  font-family: var(--font-hand), cursive !important;
+}
+
+.todo-tasklist-title-text {
+  font-size: 26px !important;
+  line-height: 1.15;
   color: var(--todo-ink);
   transition: color 180ms ease, opacity 180ms ease;
   letter-spacing: 0.01em;
@@ -331,30 +412,40 @@ body,
 .todo-tasklist-right {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
+}
+
+.todo-tasklist .todo-card-due {
+  font-family: var(--font-hand), cursive !important;
+  font-size: 22px !important;
+  line-height: 1;
+  color: var(--todo-ink-secondary);
+}
+
+.todo-tasklist .todo-badge {
+  font-family: var(--font-hand), cursive !important;
+  font-size: 20px !important;
+  padding: 1px 10px;
+  line-height: 1.1;
 }
 
 .todo-tasklist-note {
-  font-family: var(--font-hand), cursive;
-  font-size: 22px;
+  font-family: var(--font-hand), cursive !important;
+  font-size: 22px !important;
   line-height: 1;
   color: var(--todo-note-neutral);
 }
 
-/* Add Todo Input Row */
+/* Add Todo Input Row — Pill shape, NO border */
 .todo-tasklist-add {
   display: flex;
   align-items: center;
   gap: 10px;
   margin-top: 14px;
-  padding: 10px 8px 4px;
-  border-top: 1px dashed var(--todo-line);
-  background: transparent;
-}
-
-.todo-tasklist-add-icon {
-  color: var(--todo-ink-secondary);
-  flex-shrink: 0;
+  padding: 8px 16px;
+  border-radius: 9999px;
+  background: rgba(0, 0, 0, 0.025);
+  border: none !important;
 }
 
 .todo-tasklist-input {
@@ -362,52 +453,460 @@ body,
   background: transparent;
   border: none;
   outline: none;
-  font-family: var(--font-display), "Timeless Serif", Georgia, serif !important;
-  font-size: 18px;
-  font-weight: 400;
-  letter-spacing: -0.015em;
+  font-family: var(--font-hand), cursive !important;
+  font-size: 24px !important;
   color: var(--todo-ink);
 }
 
 .todo-tasklist-input::placeholder {
   color: var(--todo-ink-secondary);
-  font-family: var(--font-display), "Timeless Serif", Georgia, serif !important;
-  font-size: 17px;
-  font-weight: 400;
-  letter-spacing: -0.015em;
+  font-family: var(--font-hand), cursive !important;
+  font-size: 22px !important;
   opacity: 0.65;
 }
 
 .todo-tasklist-add-btn {
-  padding: 4px 14px;
+  padding: 3px 15px;
   border-radius: 9999px;
   background: var(--todo-ink);
-  color: var(--todo-surface);
-  font-size: 13px;
-  font-family: var(--font-display), "Timeless Serif", Georgia, serif;
+  color: #ffffff;
+  font-size: 18px;
+  font-family: var(--font-hand), cursive !important;
   border: none;
+  cursor: pointer;
+  transition: opacity 160ms ease, transform 120ms ease;
+}
+
+.todo-tasklist-add-btn:hover {
+  opacity: 0.88;
+  transform: scale(1.02);
+}
+
+/* 6. Calendar View — NO border, NO black tone on selection, NO shadow */
+.todo-calendar-container {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  background: #ffffff !important;
+  border: none !important;
+  outline: none !important;
+  border-radius: 14px 14px 10px 10px !important;
+  padding: 24px 28px;
+  box-shadow: none !important;
+  color: var(--todo-ink);
+}
+
+.todo-calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 8px;
+  border-bottom: none !important;
+}
+
+.todo-calendar-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.todo-calendar-month-title {
+  margin: 0;
+  font-family: var(--font-inter), "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+  font-size: clamp(20px, 2.6vw, 24px);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--todo-ink);
+}
+
+.todo-calendar-note {
+  font-family: var(--font-hand), cursive;
+  font-size: 22px;
+  color: var(--todo-note-neutral);
+  margin-left: 6px;
+}
+
+.todo-calendar-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.todo-calendar-today-btn {
+  padding: 4px 14px;
+  border-radius: 9999px;
+  background: rgba(0, 0, 0, 0.04);
+  border: none;
+  font-size: 13px;
+  font-family: var(--font-inter), "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--todo-ink);
+  cursor: pointer;
+  transition: background 160ms ease;
+}
+
+.todo-calendar-today-btn:hover {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.todo-calendar-nav-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 9999px;
+  background: rgba(0, 0, 0, 0.04);
+  border: none;
+  color: var(--todo-ink);
+  font-size: 16px;
+  line-height: 1;
+  font-family: var(--font-inter), "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 160ms ease;
+}
+
+.todo-calendar-nav-btn:hover {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+/* Calendar Weekdays Row */
+.todo-calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  text-align: center;
+  margin-bottom: 6px;
+}
+
+.todo-calendar-weekday {
+  font-size: 13px;
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: -0.01em;
+  color: var(--todo-ink-secondary);
+  font-family: var(--font-inter), "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+}
+
+/* Calendar Days Grid */
+.todo-calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+
+/* Day button container — transparent, NO border, NO black background */
+.todo-calendar-day {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 62px;
+  padding: 2px 2px;
+  border-radius: 12px;
+  border: none !important;
+  outline: none !important;
+  background: transparent !important;
+  color: var(--todo-ink) !important;
+  box-shadow: none !important;
+  font-family: var(--font-inter), "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 180ms ease;
+}
+
+.todo-calendar-day:hover:not(:disabled) .todo-calendar-circle-wrap {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.todo-calendar-day.is-out {
+  opacity: 0.25;
+}
+
+/* Past dates cannot be edited or added */
+.todo-calendar-day.is-past {
+  opacity: 0.32;
+  cursor: not-allowed;
+}
+
+.todo-calendar-day.is-today .todo-calendar-day-number {
+  font-weight: 600;
+}
+
+/* 1:1 Aspect ratio square wrapper: always a pure circle, NEVER an oval */
+.todo-calendar-circle-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  position: relative;
+  border-radius: 50%;
+  margin: 0 auto;
+}
+
+.todo-calendar-sketch-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 36px;
+  height: 36px;
+  pointer-events: none;
+  overflow: visible;
+  z-index: 0;
+}
+
+/* When selected — NO black tone! Clean circle accent in bright red */
+.todo-calendar-day.is-selected {
+  background: transparent !important;
+  color: var(--todo-ink) !important;
+  box-shadow: none !important;
+  border: none !important;
+  outline: none !important;
+}
+
+.todo-calendar-day.is-selected .todo-calendar-day-number {
+  color: #ff2442 !important;
+  font-weight: 600;
+}
+
+.todo-calendar-circle-wrap.is-circled {
+  border-radius: 50%;
+}
+
+.todo-calendar-day-number {
+  line-height: 1;
+  position: relative;
+  z-index: 1;
+  font-size: 15px;
+  text-align: center;
+}
+
+/* Single-word todos displayed ON TOP of the date in the calendar in bright red tone */
+.todo-calendar-single-word {
+  display: block;
+  font-family: var(--font-hand), cursive !important;
+  font-size: 22px !important;
+  line-height: 1;
+  color: #ff2442 !important;
+  margin-bottom: 2px;
+  white-space: nowrap;
+  max-width: 90%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+  letter-spacing: -0.01em;
+}
+
+.todo-calendar-single-word-spacer {
+  display: block;
+  height: 22px;
+  width: 100%;
+  margin-bottom: 2px;
+  visibility: hidden;
+}
+
+/* Marker Dot for multiple or longer tasks on dates */
+.todo-calendar-day-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #ff2442;
+  margin-top: 3px;
+}
+
+/* Calendar Drawer — Selected Date Details & Tasks */
+.todo-calendar-drawer {
+  margin-top: 6px;
+  padding: 16px 18px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.02);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border: none !important;
+}
+
+.todo-calendar-drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.todo-calendar-drawer-date {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.todo-calendar-drawer-label {
+  font-family: var(--font-inter), "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  color: var(--todo-ink);
+}
+
+.todo-calendar-today-badge {
+  font-family: var(--font-inter), "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  background: rgba(16, 185, 128, 0.12);
+  color: #047857;
+  line-height: 1.2;
+}
+
+.todo-calendar-past-badge {
+  font-family: var(--font-inter), "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  background: rgba(0, 0, 0, 0.06);
+  color: var(--todo-ink-secondary);
+  line-height: 1.2;
+}
+
+.todo-calendar-drawer-count {
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  color: var(--todo-ink-secondary);
+  font-family: var(--font-inter), "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+}
+
+.todo-calendar-task-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.todo-calendar-task-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: #ffffff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+  cursor: pointer;
+  transition: background 160ms ease;
+  border: none !important;
+}
+
+.todo-calendar-task-item:hover {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.todo-calendar-task-item.is-done .todo-calendar-task-title {
+  text-decoration: line-through;
+  opacity: 0.5;
+}
+
+/* Calendar drawer task title uses the same handwritten font */
+.todo-calendar-task-title {
+  flex: 1;
+  font-family: var(--font-hand), cursive !important;
+  font-size: 24px !important;
+  line-height: 1.15;
+  color: var(--todo-ink);
+}
+
+.todo-calendar-task-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.todo-calendar-drawer .todo-card-due {
+  font-family: var(--font-hand), cursive !important;
+  font-size: 21px !important;
+}
+
+.todo-calendar-drawer .todo-badge {
+  font-family: var(--font-hand), cursive !important;
+  font-size: 19px !important;
+}
+
+/* Quick Add input inside calendar drawer */
+.todo-calendar-add-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  background: rgba(0, 0, 0, 0.03);
+  border: none !important;
+}
+
+.todo-calendar-add-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: var(--font-hand), cursive !important;
+  font-size: 22px !important;
+  color: var(--todo-ink);
+}
+
+.todo-calendar-add-input::placeholder {
+  color: var(--todo-ink-secondary);
+  font-family: var(--font-hand), cursive !important;
+  font-size: 20px !important;
+  opacity: 0.6;
+}
+
+.todo-calendar-add-btn {
+  padding: 3px 14px;
+  border-radius: 9999px;
+  background: var(--todo-ink);
+  color: #ffffff;
+  border: none;
+  font-size: 18px;
+  font-family: var(--font-hand), cursive !important;
   cursor: pointer;
   transition: opacity 160ms ease;
 }
 
-.todo-tasklist-add-btn:hover {
+.todo-calendar-add-btn:hover {
   opacity: 0.85;
 }
 
-/* 6. Stats Row */
+.todo-calendar-past-notice {
+  font-size: 13px;
+  color: var(--todo-ink-secondary);
+  font-family: var(--font-display), "Timeless Serif", Georgia, serif;
+  font-style: italic;
+  padding: 6px 8px;
+}
+
+/* 7. Stats Row — White rounded cards, NO border */
 .todo-stats-row {
   display: flex;
-  gap: 14px;
+  gap: 16px;
   flex-wrap: wrap;
 }
 
 .todo-stat-card {
   flex: 1;
   min-width: 140px;
-  padding: 14px 18px;
-  background: var(--todo-surface);
-  border: 1px solid var(--todo-line);
-  border-radius: 12px;
+  padding: 18px 22px;
+  background: #ffffff !important;
+  border: none !important;
+  outline: none !important;
+  border-radius: 18px !important;
+  box-shadow: 0 10px 32px -4px rgba(0, 0, 0, 0.05), 0 4px 12px -2px rgba(0, 0, 0, 0.02) !important;
   display: flex;
   flex-direction: column;
   color: var(--todo-ink);
@@ -437,12 +936,14 @@ body,
   color: var(--todo-note-neutral);
 }
 
-/* 7. Question & Followups */
+/* 8. Question & Followups — White rounded containers, NO border */
 .todo-question-box {
-  background: var(--todo-surface);
-  border: 1px solid var(--todo-line);
-  border-radius: 16px;
-  padding: 20px;
+  background: #ffffff !important;
+  border: none !important;
+  outline: none !important;
+  border-radius: 22px !important;
+  padding: 24px 28px;
+  box-shadow: 0 10px 32px -4px rgba(0, 0, 0, 0.05), 0 4px 12px -2px rgba(0, 0, 0, 0.02) !important;
   color: var(--todo-ink);
 }
 
@@ -460,20 +961,181 @@ body,
 }
 
 .todo-option-pill {
-  padding: 8px 16px;
+  padding: 9px 18px;
   border-radius: 9999px;
-  background: var(--todo-surface);
-  border: 1px solid var(--todo-line);
+  background: #ffffff !important;
+  border: none !important;
+  outline: none !important;
   font-size: 14px;
   color: var(--todo-ink);
   font-family: var(--font-display), "Timeless Serif", Georgia, serif;
   cursor: pointer;
-  box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 6px 18px -2px rgba(0, 0, 0, 0.05) !important;
   transition: all 180ms ease;
 }
 
 .todo-option-pill:hover {
-  border-color: var(--todo-ink);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 8px 24px -2px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Dark mode styling overrides for containers */
+[data-openui-theme="dark"] .todo-card,
+[data-theme="dark"] .todo-card,
+[data-openui-theme="dark"] .todo-tasklist,
+[data-theme="dark"] .todo-tasklist,
+[data-openui-theme="dark"] .todo-calendar-container,
+[data-theme="dark"] .todo-calendar-container,
+[data-openui-theme="dark"] .todo-stat-card,
+[data-theme="dark"] .todo-stat-card,
+[data-openui-theme="dark"] .todo-question-box,
+[data-theme="dark"] .todo-question-box,
+[data-openui-theme="dark"] .todo-option-pill,
+[data-theme="dark"] .todo-option-pill {
+  background: #1a1b1f !important;
+  color: #f3f4f6 !important;
+  box-shadow: 0 8px 24px -6px rgba(0, 0, 0, 0.5) !important;
+}
+
+[data-openui-theme="dark"] .todo-calendar-drawer,
+[data-theme="dark"] .todo-calendar-drawer {
+  background: rgba(255, 255, 255, 0.04) !important;
+}
+
+[data-openui-theme="dark"] .todo-calendar-task-item,
+[data-theme="dark"] .todo-calendar-task-item {
+  background: #23252a !important;
+}
+
+[data-openui-theme="dark"] .todo-checkbox {
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+[data-openui-theme="dark"] .todo-checkbox.checked {
+  background: #ffffff;
+  border-color: #ffffff;
+}
+
+[data-openui-theme="dark"] .todo-checkbox.checked::after {
+  border-color: #111215;
+}
+
+/* Drag Handle */
+.todo-drag-handle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  font-size: 15px;
+  line-height: 1;
+  color: var(--todo-ink-secondary);
+  opacity: 0.3;
+  cursor: grab;
+  user-select: none;
+  transition: opacity 140ms ease;
+}
+
+.todo-drag-handle:hover {
+  opacity: 0.85;
+}
+
+.todo-tasklist-item.is-dragging,
+.todo-calendar-task-item.is-dragging {
+  opacity: 0.35;
+  cursor: grabbing;
+}
+
+.todo-tasklist-item.is-drag-over,
+.todo-calendar-task-item.is-drag-over {
+  background: rgba(0, 0, 0, 0.04) !important;
+  border-top: 2px solid rgba(0, 0, 0, 0.35) !important;
+}
+
+/* Inline Edit Input — Neutral shade underline */
+.todo-inline-edit-input {
+  font-family: var(--font-hand), cursive !important;
+  font-size: 26px !important;
+  line-height: 1.15;
+  color: var(--todo-ink);
+  background: transparent;
+  border: none;
+  border-bottom: 1.5px dashed rgba(0, 0, 0, 0.35);
+  outline: none;
+  padding: 0 2px;
+  width: 100%;
+}
+
+/* Three Dots Menu Wrap & Button */
+.todo-menu-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.todo-menu-btn {
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  line-height: 1;
+  padding: 2px 6px;
+  cursor: pointer;
+  color: var(--todo-ink-secondary);
+  border-radius: 6px;
+  opacity: 0.55;
+  transition: all 140ms ease;
+  letter-spacing: -0.05em;
+}
+
+.todo-menu-btn:hover {
+  opacity: 1;
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.todo-menu-dropdown {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 4px);
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12), 0 1px 3px rgba(0, 0, 0, 0.06);
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  z-index: 100;
+  min-width: 90px;
+}
+
+.todo-menu-dropdown,
+.todo-menu-item,
+.todo-menu-item * {
+  font-family: var(--font-inter), "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+}
+
+.todo-menu-item {
+  background: transparent;
+  border: none;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-family: var(--font-inter), "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  text-align: left;
+  cursor: pointer;
+  border-radius: 6px;
+  color: var(--todo-ink);
+  transition: background 120ms ease;
+  white-space: nowrap;
+}
+
+.todo-menu-item:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.todo-menu-item--delete {
+  color: #ef4444 !important;
+}
+
+.todo-menu-item--delete:hover {
+  background: rgba(239, 68, 68, 0.08) !important;
 }

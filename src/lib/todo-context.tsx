@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useMemo, useState, useCallback } from "react";
+import React, { createContext, useContext, useMemo, useState, useCallback, useEffect } from "react";
 
 export type TodoPriority = "urgent" | "high" | "normal" | "low" | "priority" | "not priority";
 
@@ -125,6 +125,18 @@ export function TodoProvider({
   const todayStr = useMemo(() => toIsoDate(new Date()), []);
   const initialDate = defaultDate && defaultDate >= todayStr ? defaultDate : todayStr;
   const [selectedDate, setSelectedDate] = useState<string>(initialDate);
+
+  // Merge streamed tasks when initialTasks expands during streaming without creating user activity events
+  useEffect(() => {
+    if (!initialTasks || initialTasks.length === 0) return;
+    setTasks((prev) => {
+      const newItems = initialTasks.filter(
+        (initT) => !prev.some((p) => p.id === initT.id || (p.title === initT.title && p.date === initT.date))
+      );
+      if (newItems.length === 0) return prev;
+      return [...prev, ...newItems];
+    });
+  }, [initialTasks]);
 
   const addActivityEvent = useCallback((event: Omit<ActivityEvent, "id" | "timestamp">) => {
     const newEvent: ActivityEvent = {

@@ -140,16 +140,12 @@ export async function POST(req: Request) {
           const lines = code.split("\n");
           for (let i = 0; i < lines.length; i++) {
             const line = lines[i];
-            // Stream token/word chunks progressively rather than dropping entire blocks at once
-            const tokens = line.match(/\S+\s*|\s+/g) || [line];
-            for (const token of tokens) {
-              writer.write({ type: "text-delta", id: "oui-1-msg", delta: token });
-              await new Promise((resolve) => setTimeout(resolve, 28));
-            }
-            if (i < lines.length - 1) {
-              writer.write({ type: "text-delta", id: "oui-1-msg", delta: "\n" });
-              await new Promise((resolve) => setTimeout(resolve, 60));
-            }
+            writer.write({
+              type: "text-delta",
+              id: "oui-1-msg",
+              delta: line + (i < lines.length - 1 ? "\n" : ""),
+            });
+            await new Promise((resolve) => setTimeout(resolve, 15));
           }
 
           writer.write({ type: "text-end", id: "oui-1-msg" });

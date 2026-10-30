@@ -475,40 +475,35 @@ function TaskListView({ props }: ComponentRenderProps<{ title?: string; items?: 
 
   const directItems = list(props?.items);
 
-  // Sync directItems into context if context is empty
-  useEffect(() => {
-    if (todoCtx && directItems.length > 0) {
-      if (todoCtx.tasks.length === 0) {
-        for (const item of directItems) {
-          const ip = getBlockProps(item);
-          if (ip && ip.title) {
-            const date = ip.due ? parseDateFromText(ip.due) : toIsoDate(new Date());
-            todoCtx.addTask(ip.title, date, ip.priority, ip.due, ip.note);
-          }
+  const tasksToDisplay = useMemo(() => {
+    const listMap = new Map<string, TodoTask>();
+    // Context tasks first (they reflect user interactions, toggles, edits, reordering)
+    if (todoCtx) {
+      for (const t of todoCtx.tasks) {
+        listMap.set(t.id, t);
+      }
+    }
+    // Also include any direct items that might be streaming in
+    for (let idx = 0; idx < directItems.length; idx++) {
+      const item = directItems[idx];
+      const ip = getBlockProps(item);
+      if (ip?.title) {
+        const id = ip.id || `item-${idx}`;
+        if (!listMap.has(id)) {
+          listMap.set(id, {
+            id,
+            title: ip.title,
+            done: !!ip.done,
+            priority: ip.priority as TodoPriority,
+            due: ip.due,
+            note: ip.note,
+            date: ip.due ? parseDateFromText(ip.due) : toIsoDate(new Date()),
+            source: "list",
+          });
         }
       }
     }
-  }, [directItems, todoCtx]);
-
-  const tasksToDisplay = useMemo(() => {
-    if (todoCtx && todoCtx.tasks.length > 0) {
-      return todoCtx.tasks;
-    }
-    return directItems
-      .map((item, idx) => {
-        const ip = getBlockProps(item);
-        return {
-          id: ip.id || `item-${idx}`,
-          title: ip.title || "",
-          done: !!ip.done,
-          priority: ip.priority as TodoPriority,
-          due: ip.due,
-          note: ip.note,
-          date: ip.due ? parseDateFromText(ip.due) : toIsoDate(new Date()),
-          source: "list" as const,
-        };
-      })
-      .filter((t) => !!t.title);
+    return Array.from(listMap.values());
   }, [todoCtx, todoCtx?.tasks, directItems]);
 
   return (
@@ -955,6 +950,8 @@ function extractInitialTasks(blocks: unknown[]): {
 } {
   const tasks: TodoTask[] = [];
   let headlineDate: string | undefined;
+  let headlineText = "";
+  let listTitle = "";
   let hasCalendar = false;
 
   for (const block of blocks) {
@@ -967,22 +964,61 @@ function extractInitialTasks(blocks: unknown[]): {
     }
 
     if (typeName === "DailyHeadline" && props?.text) {
+      headlineText = props.text;
       headlineDate = parseDateFromText(props.text);
     }
 
+    if (typeName === "TaskList" && props?.title) {
+      listTitle = props.title;
+    }
+  }
+
+  const baseDate = headlineDate ? new Date(`${headlineDate}T12:00:00`) : new Date();
+
+  for (const block of blocks) {
+    if (!block || typeof block !== "object") continue;
+    const typeName = getBlockTypeName(block);
+    const props = getBlockProps(block);
+
     if (typeName === "TaskList" && props?.items) {
       const itemList = list(props.items);
-      for (const item of itemList) {
+      const isMultiDayOrSplit =
+        /split|ppl|workout|\b\d+-day\b|routine|sprint|multi-day/i.test(`${headlineText} ${listTitle}`) ||
+        itemList.some((item) => {
+          const ip = getBlockProps(item);
+          return /day\s*\d+|push|pull|legs|upper|lower/i.test(ip?.title || "");
+        });
+
+      for (let i = 0; i < itemList.length; i++) {
+        const item = itemList[i];
         if (!item || typeof item !== "object") continue;
         const ip = getBlockProps(item);
         if (ip?.title) {
-          const date = ip.due ? parseDateFromText(ip.due) : (headlineDate || toIsoDate(new Date()));
+          let date: string;
+          let due = ip.due;
+
+          if (ip.due) {
+            date = parseDateFromText(ip.due, baseDate);
+          } else if (isMultiDayOrSplit) {
+            const d = new Date(baseDate);
+            d.setDate(baseDate.getDate() + i);
+            date = toIsoDate(d);
+            due =
+              i === 0
+                ? "Today"
+                : i === 1
+                ? "Tomorrow"
+                : d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+          } else {
+            date = headlineDate || toIsoDate(baseDate);
+          }
+
           tasks.push({
-            id: ip.id || `item-${Math.random()}`,
+            id: ip.id || `item-${i}-${Math.random().toString(36).slice(2, 6)}`,
             title: ip.title,
             done: !!ip.done,
             priority: ip.priority,
-            due: ip.due,
+            due,
             note: ip.note,
             date,
             source: "list",
@@ -997,17 +1033,10 @@ function extractInitialTasks(blocks: unknown[]): {
 
 function AgentActivityView({
   blocks = [],
-  onRunAgain,
 }: {
   blocks?: unknown[];
-  onRunAgain?: () => void;
 }) {
   const todoCtx = useTodoContext();
-  const triggerAction = useTriggerAction();
-
-  const handleRun = onRunAgain || (() => {
-    triggerAction("Review my week: draft a clean executive priority board with urgent deadlines and next actions.");
-  });
 
   // Extract info from blocks
   const blockList = list(blocks);
@@ -1117,7 +1146,7 @@ function AgentActivityView({
     return groups;
   }, [headlineText, focusText, activeTasks, activityEvents]);
 
-  return <BoardUITaskList tasks={tasks} onRunAgain={handleRun} />;
+  return <BoardUITaskList tasks={tasks} />;
 }
 
 function TodoBoardInner({
@@ -1129,21 +1158,16 @@ function TodoBoardInner({
   renderNode: (node: unknown) => unknown;
   hasExplicitCalendar: boolean;
 }) {
-  const triggerAction = useTriggerAction();
   const explicitCalendarInBlocks = blocks.some((b: any) => getBlockTypeName(b) === "TodoCalendar");
   const hasCalendar = hasExplicitCalendar || explicitCalendarInBlocks;
   const hasTaskList = blocks.some((b: any) => getBlockTypeName(b) === "TaskList");
   const hasAgentActivity = blocks.some((b: any) => getBlockTypeName(b) === "AgentActivity");
 
-  const handleRunAgain = () => {
-    triggerAction("Review my week: draft a clean executive priority board with urgent deadlines and next actions.");
-  };
-
   return (
     <div className="todo-board-container">
       {/* BoardUI Task List - streaming log of what the agent did above the working board */}
       {!hasAgentActivity && (
-        <AgentActivityView blocks={blocks} onRunAgain={handleRunAgain} />
+        <AgentActivityView blocks={blocks} />
       )}
 
       {blocks.map((node, i) => {

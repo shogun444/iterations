@@ -1150,7 +1150,7 @@ body,
   align-items: center;
   justify-content: center;
   padding: 4px 8px 18px;
-  font-family: var(--font-inter), "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+  font-family: var(--font-display), "Timeless Serif", Georgia, serif !important;
 }
 
 .bui-task-list-card {
@@ -1164,11 +1164,35 @@ body,
   border-radius: 12px;
   padding: 14px 16px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
-  font-family: var(--font-inter), "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+  font-family: var(--font-display), "Timeless Serif", Georgia, serif !important;
 }
 
 .bui-task-list-card * {
-  font-family: var(--font-inter), "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+  font-family: var(--font-display), "Timeless Serif", Georgia, serif !important;
+}
+
+.bui-task-list-card svg {
+  max-width: 16px !important;
+  max-height: 16px !important;
+  width: 16px !important;
+  height: 16px !important;
+  flex-shrink: 0 !important;
+  display: inline-block !important;
+}
+
+.bui-chip svg {
+  max-width: 13px !important;
+  max-height: 13px !important;
+  width: 13px !important;
+  height: 13px !important;
+  flex-shrink: 0 !important;
+}
+
+.bui-tree-connector svg {
+  max-width: 12px !important;
+  max-height: 15px !important;
+  width: 12px !important;
+  height: 15px !important;
 }
 
 .bui-task-list-groups {
@@ -1345,29 +1369,6 @@ body,
   white-space: nowrap;
 }
 
-.bui-run-again-btn {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  align-self: flex-start;
-  border-radius: 8px;
-  border: 1px solid var(--todo-line);
-  background-color: var(--todo-surface);
-  padding: 5px 10px;
-  font-size: 12.5px;
-  font-weight: 500;
-  color: var(--todo-ink-secondary);
-  cursor: pointer;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
-  transition: all 150ms ease;
-  outline: none;
-}
-
-.bui-run-again-btn:hover {
-  background-color: rgba(0, 0, 0, 0.03);
-  color: var(--todo-ink);
-}
-
 /* Dark mode overrides for BoardUI Task List */
 [data-openui-theme="dark"] .bui-task-list-card,
 .openui-agent-interface[data-theme="dark"] .bui-task-list-card,
@@ -1406,21 +1407,4 @@ body,
 .dark .bui-chip:hover {
   background-color: rgba(255, 255, 255, 0.08);
   border-color: rgba(255, 255, 255, 0.16);
-}
-
-[data-openui-theme="dark"] .bui-run-again-btn,
-.openui-agent-interface[data-theme="dark"] .bui-run-again-btn,
-[data-theme="dark"] .bui-run-again-btn,
-.dark .bui-run-again-btn {
-  border-color: rgba(255, 255, 255, 0.08);
-  background-color: rgba(255, 255, 255, 0.03);
-  color: #9ca3af;
-}
-
-[data-openui-theme="dark"] .bui-run-again-btn:hover,
-.openui-agent-interface[data-theme="dark"] .bui-run-again-btn:hover,
-[data-theme="dark"] .bui-run-again-btn:hover,
-.dark .bui-run-again-btn:hover {
-  background-color: rgba(255, 255, 255, 0.06);
-  color: #f3f4f6;
 }

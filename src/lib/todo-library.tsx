@@ -1079,7 +1079,6 @@ function MealCardView({
             onError={() => setImgFailed(true)}
             loading="lazy"
           />
-          {props.tag && <span className="todo-card-tag">{props.tag}</span>}
           {props.note && <span className="todo-card-hand-note">{props.note}</span>}
         </div>
 
@@ -1129,7 +1128,6 @@ function MealCardView({
               >
                 ✕
               </button>
-              {props.tag && <span className="todo-card-tag">{props.tag}</span>}
             </div>
 
             <div className="todo-modal-body">
@@ -1161,7 +1159,7 @@ function MealCardView({
                 </div>
               )}
 
-              <div className="todo-modal-tips">
+              <div className="todo-modal-section">
                 <span className="todo-card-cue-label">Timing & absorption</span>
                 <p className="todo-modal-desc">
                   Pair with 400–500ml water for digestive hydration. High leucine content activates the mTOR pathway to initiate cellular muscle protein synthesis within 45 minutes of consumption.
@@ -1176,12 +1174,13 @@ function MealCardView({
 }
 
 const EXERCISE_IMAGE_PRESETS: { keywords: RegExp; url: string }[] = [
-  { keywords: /bench|chest|pec|push-up|fly/i, url: "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=800&auto=format&fit=crop&q=80" },
-  { keywords: /overhead|military|shoulder|press/i, url: "https://images.unsplash.com/photo-1532029837206-abbe2b7620e3?w=800&auto=format&fit=crop&q=80" },
-  { keywords: /incline|dumbbell press/i, url: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=800&auto=format&fit=crop&q=80" },
-  { keywords: /lateral|raise|delt/i, url: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=800&auto=format&fit=crop&q=80" },
+  { keywords: /incline/i, url: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=800&auto=format&fit=crop&q=80" },
+  { keywords: /bench|chest|pec|flat/i, url: "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=800&auto=format&fit=crop&q=80" },
+  { keywords: /overhead|military|shoulder/i, url: "https://images.unsplash.com/photo-1532029837206-abbe2b7620e3?w=800&auto=format&fit=crop&q=80" },
+  { keywords: /lateral|raise|delt/i, url: "https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?w=800&auto=format&fit=crop&q=80" },
   { keywords: /tricep|pushdown|dip|skull|extension/i, url: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&auto=format&fit=crop&q=80" },
-  { keywords: /row|back|lat|pull-up|pulldown|chin/i, url: "https://images.unsplash.com/photo-1605296867304-46d5465a13f1?w=800&auto=format&fit=crop&q=80" },
+  { keywords: /row|back|bent-over|lat/i, url: "https://images.unsplash.com/photo-1534367507873-d2d7e24c797f?w=800&auto=format&fit=crop&q=80" },
+  { keywords: /pull-up|pulldown|chin/i, url: "https://images.unsplash.com/photo-1605296867304-46d5465a13f1?w=800&auto=format&fit=crop&q=80" },
   { keywords: /bicep|curl|hammer/i, url: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=800&auto=format&fit=crop&q=80" },
   { keywords: /squat|quad|leg|lunge/i, url: "https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=800&auto=format&fit=crop&q=80" },
   { keywords: /deadlift|rdl|hamstring|hip/i, url: "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=800&auto=format&fit=crop&q=80" },
@@ -1191,7 +1190,7 @@ const DEFAULT_EXERCISE_IMAGES = [
   "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=800&auto=format&fit=crop&q=80",
   "https://images.unsplash.com/photo-1532029837206-abbe2b7620e3?w=800&auto=format&fit=crop&q=80",
   "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=800&auto=format&fit=crop&q=80",
-  "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=800&auto=format&fit=crop&q=80",
+  "https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?w=800&auto=format&fit=crop&q=80",
   "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&auto=format&fit=crop&q=80",
 ];
 
@@ -1246,15 +1245,14 @@ function ExerciseCardView({
             onError={() => setImgFailed(true)}
             loading="lazy"
           />
-          {props.muscle && <span className="todo-card-tag">{props.muscle}</span>}
           {props.note && <span className="todo-card-hand-note">{props.note}</span>}
         </div>
 
         <div className="todo-deck-card-content">
           <h4 className="todo-deck-card-title">{props.name}</h4>
           {props.setsReps && (
-            <span className="todo-deck-card-subtitle">
-              ⚡ {props.setsReps}
+            <span className="todo-deck-sets-tag">
+              {props.setsReps.replace(/^[⚡⏱\s]+/, "")}
             </span>
           )}
           {props.cue && (
@@ -1285,7 +1283,6 @@ function ExerciseCardView({
               >
                 ✕
               </button>
-              {props.muscle && <span className="todo-card-tag">{props.muscle}</span>}
             </div>
 
             <div className="todo-modal-body">
@@ -1294,12 +1291,11 @@ function ExerciseCardView({
               <div className="todo-card-pills">
                 {props.setsReps && (
                   <span className="todo-pill todo-pill--sets">
-                    <span className="todo-pill-icon">⚡</span>
-                    {props.setsReps}
+                    {props.setsReps.replace(/^[⚡⏱\s]+/, "")}
                   </span>
                 )}
                 <span className="todo-pill todo-pill--calories">
-                  ⏱ 2–3 min rest
+                  2–3 min rest
                 </span>
                 {props.note && (
                   <span className="todo-modal-hand-aside">
@@ -1315,7 +1311,7 @@ function ExerciseCardView({
                 </div>
               )}
 
-              <div className="todo-modal-tips">
+              <div className="todo-modal-section">
                 <span className="todo-card-cue-label">Rest & recovery strategy</span>
                 <p className="todo-modal-desc">
                   Take compound sets to RPE 8–9 (1 to 2 reps in reserve). Rest 2–3 minutes to replenish ATP-CP energy stores before the next heavy working set.
@@ -1359,12 +1355,15 @@ function MacroSummaryView({
   }
 
   const formulaDisplay = props.formula || "1.6g – 2.2g per kg bodyweight";
+  const explanationText =
+    props.explanation ||
+    `Aim for 1.6g/kg (~${minProtein}g) for steady daily fitness & recovery. 2.2g/kg (~${maxProtein}g) is for competitive athletes and pros during heavy progressive overload.`;
 
   return (
     <div className="todo-macro-summary-panel">
       <div className="todo-macro-header">
         <div className="todo-macro-header-titles">
-          <span className="todo-macro-badge">Nutrition & Protein Blueprint</span>
+          <span className="todo-macro-badge">Nutrition & protein blueprint</span>
           <span className="todo-macro-weight-chip">
             Target for <strong>{weightStr}</strong> bodyweight
           </span>
@@ -1374,8 +1373,25 @@ function MacroSummaryView({
 
       <div className="todo-macro-hero">
         <div className="todo-macro-hero-value">
-          <span className="todo-macro-num">{targetDisplay}</span>
-          <span className="todo-macro-sub">TARGET DAILY PROTEIN</span>
+          <div className="todo-macro-circle-target">
+            <span className="todo-macro-num">{targetDisplay}</span>
+            <svg
+              className="todo-macro-sketch-circle"
+              viewBox="0 0 340 90"
+              preserveAspectRatio="none"
+              aria-hidden="true"
+            >
+              <path
+                d="M 14,45 C 14,18 70,8 170,8 C 270,8 326,20 326,45 C 326,70 260,82 170,82 C 60,82 10,70 12,47 C 14,24 80,12 180,11"
+                fill="none"
+                stroke="#10b981"
+                strokeWidth="2.4"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </div>
+          <span className="todo-macro-sub">Target daily protein</span>
         </div>
         <div className="todo-macro-formula-callout">
           <span className="todo-macro-formula-icon">📐</span>
@@ -1383,31 +1399,9 @@ function MacroSummaryView({
         </div>
       </div>
 
-      <div className="todo-macro-stats-grid">
-        <div className="todo-macro-stat-tile">
-          <span className="todo-macro-stat-label">Daily Calories</span>
-          <span className="todo-macro-stat-val todo-macro-stat-val--amber">
-            {props.calories || `${Math.round(kg * 35)} kcal`}
-          </span>
-        </div>
-        <div className="todo-macro-stat-tile">
-          <span className="todo-macro-stat-label">Carbs (Glycogen)</span>
-          <span className="todo-macro-stat-val todo-macro-stat-val--indigo">
-            {props.carbs || `${Math.round(kg * 4)}g Carbs`}
-          </span>
-        </div>
-        <div className="todo-macro-stat-tile">
-          <span className="todo-macro-stat-label">Healthy Fats</span>
-          <span className="todo-macro-stat-val todo-macro-stat-val--coral">
-            {props.fats || `${Math.round(kg * 0.95)}g Healthy Fats`}
-          </span>
-        </div>
-      </div>
-
-      <div className="todo-macro-explanation">
-        <p>
-          {props.explanation ||
-            `Aim for 1.6g/kg (~${minProtein}g) for steady daily fitness & recovery. Elite lifters and athletes in progressive overload push to 2.0–2.2g/kg (~${maxProtein}g) to maximize muscle protein synthesis.`}
+      <div className="todo-macro-hand-explanation-box">
+        <p className="todo-macro-hand-explanation-text">
+          {explanationText}
         </p>
       </div>
     </div>

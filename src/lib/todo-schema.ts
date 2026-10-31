@@ -30,6 +30,23 @@ export const todoProps = {
     value: z.string().describe("The stat, e.g. '3 of 5', '80%'"),
     note: z.string().optional().describe("Handwritten note, 1 to 3 words"),
   }),
+  MealCard: z.object({
+    name: z.string().describe("Meal or recipe name, 2 to 6 words"),
+    protein: z.string().describe("Protein content, e.g. '48g Protein'"),
+    calories: z.string().optional().describe("Calorie estimate, e.g. '540 kcal'"),
+    tag: z.string().optional().describe("Meal slot, e.g. 'Breakfast', 'Post-Workout', 'Dinner'"),
+    imageUrl: z.string().optional().describe("High-res food photo URL from Unsplash"),
+    description: z.string().optional().describe("Nutritional breakdown and benefits, 8 to 20 words"),
+    note: z.string().optional().describe("Handwritten note, 1 to 4 words"),
+  }),
+  ExerciseCard: z.object({
+    name: z.string().describe("Exercise name, e.g. 'Barbell Bench Press'"),
+    setsReps: z.string().describe("Sets and reps, e.g. '3 sets x 8 reps'"),
+    muscle: z.string().optional().describe("Target muscle group, e.g. 'Chest & Triceps'"),
+    imageUrl: z.string().optional().describe("Gym or exercise photo URL from Unsplash"),
+    cue: z.string().optional().describe("Form coaching cue, 6 to 18 words"),
+    note: z.string().optional().describe("Handwritten note, 1 to 4 words"),
+  }),
 };
 
 export const todoBlocks = [
@@ -42,6 +59,9 @@ export const todoBlocks = [
   "StatsRow",
   "Question",
   "FollowUps",
+  "MacroSummary",
+  "MealPlan",
+  "TrainingPlan",
 ] as const;
 
 type Views = {
@@ -56,6 +76,8 @@ export function buildTodoLibrary(views: Views) {
   const TaskItem = part("TaskItem", "A single row item inside a TaskList.");
   const TaskCard = part("TaskCard", "Deprecated: do NOT use.");
   const StatCard = part("StatCard", "A small status summary metric.");
+  const MealCard = part("MealCard", "A rich editorial meal card with photo, protein content, calories, and benefits.");
+  const ExerciseCard = part("ExerciseCard", "An exercise card with sets, reps, muscle target, photo, and technique cue.");
 
   const block = (name: (typeof todoBlocks)[number], shape: z.ZodObject, description: string) =>
     defineComponent({ name, props: shape, description, component: views[name] });
@@ -142,7 +164,56 @@ export function buildTodoLibrary(views: Views) {
     "Tappable pills for what to do or ask next.",
   );
 
-  const all = [AgentActivity, DailyHeadline, FocusPull, Heading, TaskList, TodoCalendar, StatsRow, Question, FollowUps];
+  const MacroSummary = block(
+    "MacroSummary",
+    z.object({
+      bodyWeight: z.string().describe("Body weight, e.g. '70 kg' or '165 lbs'"),
+      proteinTarget: z.string().describe("Calculated daily protein target, e.g. '145g - 160g / day'"),
+      formula: z.string().optional().describe("Formula used, e.g. '2.1g protein / kg body weight'"),
+      calories: z.string().optional().describe("Daily calories, e.g. '2,450 kcal'"),
+      carbs: z.string().optional().describe("Carbs target, e.g. '280g Carbs'"),
+      fats: z.string().optional().describe("Fats target, e.g. '65g Healthy Fats'"),
+      explanation: z.string().optional().describe("Scientific reason for this protein intake, 10 to 25 words"),
+      note: z.string().optional().describe("Handwritten nutritional tip, 2 to 5 words"),
+    }),
+    "A macronutrient and protein calculation card tailored to the user's body weight.",
+  );
+
+  const MealPlan = block(
+    "MealPlan",
+    z.object({
+      title: z.string().describe("Section title, e.g. 'High-Protein Daily Fuel'"),
+      meals: z.array(MealCard.ref).describe("2 to 4 high-protein meal cards"),
+      note: z.string().optional().describe("Handwritten aside, 2 to 6 words"),
+    }),
+    "A visual culinary card deck of high-protein meals with photos, macros, and coaching tips.",
+  );
+
+  const TrainingPlan = block(
+    "TrainingPlan",
+    z.object({
+      title: z.string().describe("Routine title, e.g. 'Push Day Hypertrophy Workout'"),
+      focus: z.string().optional().describe("Target focus, e.g. 'Chest, Front Delts & Triceps'"),
+      exercises: z.array(ExerciseCard.ref).describe("3 to 5 exercise cards with sets and reps"),
+      note: z.string().optional().describe("Handwritten coaching note, 2 to 6 words"),
+    }),
+    "A visual training routine featuring exercise cards, sets, reps, coaching cues, and photos.",
+  );
+
+  const all = [
+    AgentActivity,
+    DailyHeadline,
+    FocusPull,
+    Heading,
+    TaskList,
+    TodoCalendar,
+    StatsRow,
+    Question,
+    FollowUps,
+    MacroSummary,
+    MealPlan,
+    TrainingPlan,
+  ];
 
   const TodoBoard = defineComponent({
     name: "TodoBoard",
@@ -155,7 +226,17 @@ export function buildTodoLibrary(views: Views) {
 
   return createLibrary<ComponentRenderer<any>>({
     root: "TodoBoard",
-    components: [TodoBoard, ...all, Option, TaskItem, StatCard, TaskCard, TaskCards] as never[],
+    components: [
+      TodoBoard,
+      ...all,
+      Option,
+      TaskItem,
+      StatCard,
+      TaskCard,
+      TaskCards,
+      MealCard,
+      ExerciseCard,
+    ] as never[],
   });
 }
 

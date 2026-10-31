@@ -1011,6 +1011,255 @@ function FollowUpsView({ props, renderNode }: ComponentRenderProps<{ options?: u
   );
 }
 
+const DEFAULT_MEAL_IMAGE =
+  "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&auto=format&fit=crop&q=80";
+
+function MealCardView({
+  props,
+}: ComponentRenderProps<{
+  name?: string;
+  protein?: string;
+  calories?: string;
+  tag?: string;
+  imageUrl?: string;
+  description?: string;
+  note?: string;
+}>) {
+  const [imgSrc, setImgSrc] = useState(props?.imageUrl || DEFAULT_MEAL_IMAGE);
+  const [imgFailed, setImgFailed] = useState(false);
+
+  useEffect(() => {
+    if (props?.imageUrl) {
+      setImgSrc(props.imageUrl);
+      setImgFailed(false);
+    }
+  }, [props?.imageUrl]);
+
+  if (!props?.name) return null;
+
+  return (
+    <div className="todo-editorial-card todo-meal-card">
+      <div className="todo-card-image-wrap">
+        <img
+          src={imgFailed ? DEFAULT_MEAL_IMAGE : imgSrc}
+          alt={props.name}
+          className="todo-card-image"
+          onError={() => setImgFailed(true)}
+          loading="lazy"
+        />
+        {props.tag && <span className="todo-card-tag">{props.tag}</span>}
+        {props.note && <span className="todo-card-hand-note">{props.note}</span>}
+      </div>
+
+      <div className="todo-card-body">
+        <h4 className="todo-card-title">{props.name}</h4>
+
+        <div className="todo-card-pills">
+          {props.protein && (
+            <span className="todo-pill todo-pill--protein">
+              <span className="todo-pill-dot" />
+              {props.protein}
+            </span>
+          )}
+          {props.calories && (
+            <span className="todo-pill todo-pill--calories">{props.calories}</span>
+          )}
+        </div>
+
+        {props.description && (
+          <p className="todo-card-description">{props.description}</p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+const DEFAULT_EXERCISE_IMAGE =
+  "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=800&auto=format&fit=crop&q=80";
+
+function ExerciseCardView({
+  props,
+}: ComponentRenderProps<{
+  name?: string;
+  setsReps?: string;
+  muscle?: string;
+  imageUrl?: string;
+  cue?: string;
+  note?: string;
+}>) {
+  const [imgSrc, setImgSrc] = useState(props?.imageUrl || DEFAULT_EXERCISE_IMAGE);
+  const [imgFailed, setImgFailed] = useState(false);
+
+  useEffect(() => {
+    if (props?.imageUrl) {
+      setImgSrc(props.imageUrl);
+      setImgFailed(false);
+    }
+  }, [props?.imageUrl]);
+
+  if (!props?.name) return null;
+
+  return (
+    <div className="todo-editorial-card todo-exercise-card">
+      <div className="todo-card-image-wrap">
+        <img
+          src={imgFailed ? DEFAULT_EXERCISE_IMAGE : imgSrc}
+          alt={props.name}
+          className="todo-card-image"
+          onError={() => setImgFailed(true)}
+          loading="lazy"
+        />
+        {props.muscle && <span className="todo-card-tag">{props.muscle}</span>}
+        {props.note && <span className="todo-card-hand-note">{props.note}</span>}
+      </div>
+
+      <div className="todo-card-body">
+        <h4 className="todo-card-title">{props.name}</h4>
+
+        <div className="todo-card-pills">
+          {props.setsReps && (
+            <span className="todo-pill todo-pill--sets">
+              <span className="todo-pill-icon">⚡</span>
+              {props.setsReps}
+            </span>
+          )}
+        </div>
+
+        {props.cue && (
+          <div className="todo-card-cue-box">
+            <span className="todo-card-cue-label">Form cue:</span>
+            <p className="todo-card-description">{props.cue}</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function MacroSummaryView({
+  props,
+}: ComponentRenderProps<{
+  bodyWeight?: string;
+  proteinTarget?: string;
+  formula?: string;
+  calories?: string;
+  carbs?: string;
+  fats?: string;
+  explanation?: string;
+  note?: string;
+}>) {
+  if (!props) return null;
+
+  return (
+    <div className="todo-macro-summary-panel">
+      <div className="todo-macro-header">
+        <div className="todo-macro-header-titles">
+          <span className="todo-macro-badge">Nutrition & Protein Blueprint</span>
+          {props.bodyWeight && (
+            <span className="todo-macro-weight-chip">
+              Target for <strong>{props.bodyWeight}</strong> bodyweight
+            </span>
+          )}
+        </div>
+        {props.note && <span className="todo-macro-hand-note">{props.note}</span>}
+      </div>
+
+      <div className="todo-macro-hero">
+        <div className="todo-macro-hero-value">
+          <span className="todo-macro-num">{props.proteinTarget || "150g"}</span>
+          <span className="todo-macro-sub">Target Daily Protein</span>
+        </div>
+        {props.formula && (
+          <div className="todo-macro-formula-callout">
+            <span className="todo-macro-formula-icon">📐</span>
+            <span>{props.formula}</span>
+          </div>
+        )}
+      </div>
+
+      <div className="todo-macro-stats-grid">
+        {props.calories && (
+          <div className="todo-macro-stat-tile">
+            <span className="todo-macro-stat-label">Daily Calories</span>
+            <span className="todo-macro-stat-val todo-macro-stat-val--amber">{props.calories}</span>
+          </div>
+        )}
+        {props.carbs && (
+          <div className="todo-macro-stat-tile">
+            <span className="todo-macro-stat-label">Carbs (Glycogen)</span>
+            <span className="todo-macro-stat-val todo-macro-stat-val--indigo">{props.carbs}</span>
+          </div>
+        )}
+        {props.fats && (
+          <div className="todo-macro-stat-tile">
+            <span className="todo-macro-stat-label">Healthy Fats</span>
+            <span className="todo-macro-stat-val todo-macro-stat-val--coral">{props.fats}</span>
+          </div>
+        )}
+      </div>
+
+      {props.explanation && (
+        <div className="todo-macro-explanation">
+          <div className="todo-macro-explanation-indicator" />
+          <p>{props.explanation}</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function MealPlanView({
+  props,
+  renderNode,
+}: ComponentRenderProps<{
+  title?: string;
+  meals?: unknown[];
+  note?: string;
+}>) {
+  const meals = list(props?.meals);
+  return (
+    <div className="todo-cards-section todo-meal-plan-section">
+      <div className="todo-section-header">
+        <h3 className="todo-section-title">{props?.title || "Daily High-Protein Fuel"}</h3>
+        {props?.note && <span className="todo-section-hand-note">{props.note}</span>}
+      </div>
+      <div className="todo-cards-grid">
+        {meals.map((node, i) => (
+          <Fragment key={i}>{renderNode(node) as React.ReactNode}</Fragment>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function TrainingPlanView({
+  props,
+  renderNode,
+}: ComponentRenderProps<{
+  title?: string;
+  focus?: string;
+  exercises?: unknown[];
+  note?: string;
+}>) {
+  const exercises = list(props?.exercises);
+  return (
+    <div className="todo-cards-section todo-training-plan-section">
+      <div className="todo-section-header">
+        <div>
+          <h3 className="todo-section-title">{props?.title || "Training Program"}</h3>
+          {props?.focus && <span className="todo-section-subtitle">{props.focus}</span>}
+        </div>
+        {props?.note && <span className="todo-section-hand-note">{props.note}</span>}
+      </div>
+      <div className="todo-cards-grid">
+        {exercises.map((node, i) => (
+          <Fragment key={i}>{renderNode(node) as React.ReactNode}</Fragment>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 /** Extract initial tasks from statements in blocks */
 function extractInitialTasks(blocks: unknown[]): {
   tasks: TodoTask[];
@@ -1118,6 +1367,7 @@ function TodoBoardInner({
   hasExplicitCalendar: boolean;
 }) {
   const explicitCalendarInBlocks = blocks.some((b: any) => getBlockTypeName(b) === "TodoCalendar");
+  const hasTaskList = blocks.some((b: any) => getBlockTypeName(b) === "TaskList");
   const hasCalendar = hasExplicitCalendar || explicitCalendarInBlocks;
 
   return (
@@ -1126,7 +1376,7 @@ function TodoBoardInner({
         <Fragment key={i}>{renderNode(node) as React.ReactNode}</Fragment>
       ))}
 
-      {!hasCalendar && (
+      {hasTaskList && !hasCalendar && (
         <TodoCalendarView
           props={{ title: "Schedule & Deadlines" }}
           renderNode={renderNode}
@@ -1163,5 +1413,10 @@ export const todoLibrary = buildTodoLibrary({
   Question: QuestionView as never,
   Option: OptionView as never,
   FollowUps: FollowUpsView as never,
+  MacroSummary: MacroSummaryView as never,
+  MealPlan: MealPlanView as never,
+  TrainingPlan: TrainingPlanView as never,
+  MealCard: MealCardView as never,
+  ExerciseCard: ExerciseCardView as never,
   TodoBoard: TodoBoardView as never,
 });

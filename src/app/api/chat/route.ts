@@ -122,70 +122,63 @@ export async function POST(req: Request) {
 
       if (!res.ok) {
         const errText = await res.text();
-        return Response.json(
-          { error: { message: `OUI-1 generation error: ${errText}` } },
-          { status: 500 },
-        );
-      }
+        console.warn(`Local OUI-1 endpoint returned ${res.status}: ${errText}. Falling back to Cloud Gateway.`);
+      } else {
+        const data = (await res.json()) as { output?: string };
+        const rawCode = (data.output || "").trim();
+        const code = sanitizeOpenUIProgram(rawCode);
 
-      const data = (await res.json()) as { output?: string };
-      const rawCode = (data.output || "").trim();
-      const code = sanitizeOpenUIProgram(rawCode);
+        const stream = createUIMessageStream({
+          execute: async ({ writer }) => {
+            writer.write({ type: "start-step" });
+            writer.write({ type: "text-start", id: "oui-1-msg" });
 
-      const stream = createUIMessageStream({
-        execute: async ({ writer }) => {
-          writer.write({ type: "start-step" });
-          writer.write({ type: "text-start", id: "oui-1-msg" });
-
-          const lines = code.split("\n");
-          for (let i = 0; i < lines.length; i++) {
-            if (req.signal.aborted) break;
-            const line = lines[i];
-            writer.write({
-              type: "text-delta",
-              id: "oui-1-msg",
-              delta: line + (i < lines.length - 1 ? "\n" : ""),
-            });
-            await new Promise((resolve) => setTimeout(resolve, 85));
-          }
-
-          writer.write({ type: "text-end", id: "oui-1-msg" });
-          writer.write({ type: "finish-step" });
-
-          if (apiKey && threadId) {
-            try {
-              await storeTurn({
-                apiKey,
-                conversationId: threadId,
-                messages: [
-                  question,
-                  { role: "assistant", content: [{ type: "text", text: code }] } as never,
-                ],
+            const lines = code.split("\n");
+            for (let i = 0; i < lines.length; i++) {
+              if (req.signal.aborted) break;
+              const line = lines[i];
+              writer.write({
+                type: "text-delta",
+                id: "oui-1-msg",
+                delta: line + (i < lines.length - 1 ? "\n" : ""),
               });
-            } catch (err: unknown) {
-              const msg = err instanceof Error ? err.message : String(err);
-              // Ignore 404 when running with local client threads that aren't hosted on Thesys Cloud
-              if (!msg.includes("404") && !msg.includes("Conversation not found")) {
-                console.warn("Notice: OpenUI Cloud sync skipped:", msg);
+              await new Promise((resolve) => setTimeout(resolve, 85));
+            }
+
+            writer.write({ type: "text-end", id: "oui-1-msg" });
+            writer.write({ type: "finish-step" });
+
+            if (apiKey && threadId) {
+              try {
+                await storeTurn({
+                  apiKey,
+                  conversationId: threadId,
+                  messages: [
+                    question,
+                    { role: "assistant", content: [{ type: "text", text: code }] } as never,
+                  ],
+                });
+              } catch (err: unknown) {
+                const msg = err instanceof Error ? err.message : String(err);
+                if (!msg.includes("404") && !msg.includes("Conversation not found")) {
+                  console.warn("Notice: OpenUI Cloud sync skipped:", msg);
+                }
               }
             }
-          }
-        },
-      });
+          },
+        });
 
-      return createUIMessageStreamResponse({ stream });
+        return createUIMessageStreamResponse({ stream });
+      }
     } catch (err) {
-      console.error("OUI-1 local call failed:", err);
-      return Response.json(
-        { error: { message: err instanceof Error ? err.message : "OUI-1 generation failed" } },
-        { status: 500 },
-      );
+      console.warn("Notice: OUI-1 local endpoint on 8005 unavailable, streaming via Cloud Gateway:", err);
     }
   }
 
   // Cloud model fallback via Thesys Gateway
+  const targetCloudModel = model === "thesys/oui-1-local" ? "google/gemini-3.6-flash-free" : model;
   const result = streamText({
-    model: openai.chat(model),
+    model: openai.chat(targetCloudModel),
     system: generateSystemPrompt({ cloud: true, library, promptOptions }),
     messages: modelMessages,
     tools: appTools,

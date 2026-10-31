@@ -1541,3 +1541,465 @@ body,
   background-color: rgba(255, 255, 255, 0.08);
   border-color: rgba(255, 255, 255, 0.16);
 }
+
+/* =========================================================================
+   TRIP PLANNER EDITORIAL CARDS: MEALS, MACROS, AND TRAINING PROGRAMS
+   ========================================================================= */
+
+.todo-cards-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  margin-top: 8px;
+}
+
+.todo-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0 4px;
+}
+
+.todo-section-title {
+  margin: 0;
+  font-family: var(--font-inter), "Inter", sans-serif !important;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--todo-ink);
+}
+
+.todo-section-subtitle {
+  display: block;
+  font-family: var(--font-inter), "Inter", sans-serif !important;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--todo-ink-secondary);
+  margin-top: 2px;
+}
+
+.todo-section-hand-note {
+  font-family: var(--font-hand-var), "Reenie Beanie", cursive !important;
+  font-size: 24px;
+  color: #b45309;
+  transform: rotate(-2.5deg);
+  display: inline-block;
+}
+
+.todo-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+  width: 100%;
+}
+
+/* Floating Editorial Card (Trip Planner style) */
+.todo-editorial-card {
+  background-color: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 2px 6px -1px rgba(0, 0, 0, 0.02);
+  transition: transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.28s ease, border-color 0.28s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.todo-editorial-card:nth-child(odd) {
+  --card-tilt: -0.6deg;
+  transform: rotate(var(--card-tilt));
+}
+
+.todo-editorial-card:nth-child(even) {
+  --card-tilt: 0.6deg;
+  transform: rotate(var(--card-tilt));
+}
+
+.todo-editorial-card:hover {
+  transform: translateY(-4px) rotate(0deg);
+  box-shadow: 0 14px 32px -4px rgba(0, 0, 0, 0.1), 0 4px 10px -2px rgba(0, 0, 0, 0.04);
+  border-color: rgba(0, 0, 0, 0.14);
+}
+
+.todo-card-image-wrap {
+  position: relative;
+  width: 100%;
+  height: 175px;
+  overflow: hidden;
+  background-color: #f3f4f6;
+}
+
+.todo-card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.todo-editorial-card:hover .todo-card-image {
+  transform: scale(1.05);
+}
+
+.todo-card-tag {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: rgba(17, 24, 39, 0.78);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #ffffff;
+  font-family: var(--font-inter), "Inter", sans-serif !important;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.todo-card-hand-note {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  font-family: var(--font-hand-var), "Reenie Beanie", cursive !important;
+  font-size: 22px;
+  color: #fef08a;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.85);
+  transform: rotate(3.5deg);
+  pointer-events: none;
+}
+
+.todo-card-body {
+  padding: 16px 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+}
+
+.todo-card-title {
+  margin: 0;
+  font-family: var(--font-inter), "Inter", sans-serif !important;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--todo-ink);
+  line-height: 1.3;
+  letter-spacing: -0.015em;
+}
+
+.todo-card-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.todo-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-inter), "Inter", sans-serif !important;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3.5px 10px;
+  border-radius: 9999px;
+}
+
+.todo-pill-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: currentColor;
+}
+
+.todo-pill-icon {
+  font-size: 11px;
+}
+
+.todo-pill--protein {
+  background-color: #ecfdf5;
+  color: #047857;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.todo-pill--calories {
+  background-color: #fffbeb;
+  color: #b45309;
+  border: 1px solid rgba(254, 182, 0, 0.25);
+}
+
+.todo-pill--sets {
+  background-color: #eef2ff;
+  color: #4338ca;
+  border: 1px solid rgba(99, 102, 241, 0.25);
+}
+
+.todo-card-description {
+  margin: 0;
+  font-family: var(--font-inter), "Inter", sans-serif !important;
+  font-size: 13px;
+  color: var(--todo-ink-secondary);
+  line-height: 1.5;
+}
+
+.todo-card-cue-box {
+  background-color: #f9fafb;
+  border-left: 3px solid #6366f1;
+  padding: 8px 12px;
+  border-radius: 0 8px 8px 0;
+  margin-top: 2px;
+}
+
+.todo-card-cue-label {
+  display: block;
+  font-family: var(--font-inter), "Inter", sans-serif !important;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #6366f1;
+  margin-bottom: 2px;
+}
+
+/* =========================================================================
+   MACRO SUMMARY HERO PANEL (Nutrition & Protein Calculation)
+   ========================================================================= */
+
+.todo-macro-summary-panel {
+  background: linear-gradient(145deg, #ffffff 0%, #fbfcfd 100%);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 24px;
+  padding: 24px 28px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+.todo-macro-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.todo-macro-header-titles {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.todo-macro-badge {
+  font-family: var(--font-inter), "Inter", sans-serif !important;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #047857;
+  background-color: #ecfdf5;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  padding: 4px 10px;
+  border-radius: 9999px;
+}
+
+.todo-macro-weight-chip {
+  font-family: var(--font-inter), "Inter", sans-serif !important;
+  font-size: 13.5px;
+  color: var(--todo-ink-secondary);
+}
+
+.todo-macro-weight-chip strong {
+  color: var(--todo-ink);
+}
+
+.todo-macro-hand-note {
+  font-family: var(--font-hand-var), "Reenie Beanie", cursive !important;
+  font-size: 26px;
+  color: #b45309;
+  transform: rotate(-3deg);
+  display: inline-block;
+}
+
+.todo-macro-hero {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 6px 0 12px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.todo-macro-hero-value {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.todo-macro-num {
+  font-family: var(--font-display-var), "Timeless Serif", Georgia, serif !important;
+  font-size: clamp(38px, 5.5vw, 54px);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--todo-ink);
+}
+
+.todo-macro-sub {
+  font-family: var(--font-inter), "Inter", sans-serif !important;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--todo-ink-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.todo-macro-formula-callout {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-inter), "Inter", sans-serif !important;
+  font-size: 13px;
+  font-weight: 600;
+  color: #4338ca;
+  background-color: #eef2ff;
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  padding: 6px 14px;
+  border-radius: 9999px;
+}
+
+.todo-macro-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+}
+
+.todo-macro-stat-tile {
+  background-color: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 14px;
+  padding: 12px 14px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.todo-macro-stat-label {
+  display: block;
+  font-family: var(--font-inter), "Inter", sans-serif !important;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--todo-ink-secondary);
+  margin-bottom: 4px;
+}
+
+.todo-macro-stat-val {
+  font-family: var(--font-inter), "Inter", sans-serif !important;
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.todo-macro-stat-val--amber {
+  color: #b45309;
+}
+
+.todo-macro-stat-val--indigo {
+  color: #4338ca;
+}
+
+.todo-macro-stat-val--coral {
+  color: #dc2626;
+}
+
+.todo-macro-explanation {
+  background-color: #f0fdf4;
+  border-left: 3px solid #10b980;
+  padding: 12px 16px;
+  border-radius: 0 12px 12px 0;
+  color: #166534;
+  font-family: var(--font-inter), "Inter", sans-serif !important;
+  font-size: 13.5px;
+  line-height: 1.5;
+}
+
+.todo-macro-explanation p {
+  margin: 0;
+}
+
+/* =========================================================================
+   DARK MODE OVERRIDES FOR CARDS & MACROS
+   ========================================================================= */
+
+[data-openui-theme="dark"] .todo-editorial-card,
+.openui-agent-interface[data-theme="dark"] .todo-editorial-card,
+[data-theme="dark"] .todo-editorial-card,
+.dark .todo-editorial-card {
+  background-color: #1a1b1f;
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.4);
+}
+
+[data-openui-theme="dark"] .todo-editorial-card:hover,
+.openui-agent-interface[data-theme="dark"] .todo-editorial-card:hover,
+[data-theme="dark"] .todo-editorial-card:hover,
+.dark .todo-editorial-card:hover {
+  border-color: rgba(255, 255, 255, 0.16);
+  box-shadow: 0 14px 32px -4px rgba(0, 0, 0, 0.6);
+}
+
+[data-openui-theme="dark"] .todo-card-image-wrap,
+.openui-agent-interface[data-theme="dark"] .todo-card-image-wrap,
+[data-theme="dark"] .todo-card-image-wrap,
+.dark .todo-card-image-wrap {
+  background-color: #2b2e35;
+}
+
+[data-openui-theme="dark"] .todo-card-cue-box,
+.openui-agent-interface[data-theme="dark"] .todo-card-cue-box,
+[data-theme="dark"] .todo-card-cue-box,
+.dark .todo-card-cue-box {
+  background-color: rgba(255, 255, 255, 0.04);
+}
+
+[data-openui-theme="dark"] .todo-macro-summary-panel,
+.openui-agent-interface[data-theme="dark"] .todo-macro-summary-panel,
+[data-theme="dark"] .todo-macro-summary-panel,
+.dark .todo-macro-summary-panel {
+  background: linear-gradient(145deg, #1a1b1f 0%, #151619 100%);
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+}
+
+[data-openui-theme="dark"] .todo-macro-hero,
+.openui-agent-interface[data-theme="dark"] .todo-macro-hero,
+[data-theme="dark"] .todo-macro-hero,
+.dark .todo-macro-hero {
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+[data-openui-theme="dark"] .todo-macro-stat-tile,
+.openui-agent-interface[data-theme="dark"] .todo-macro-stat-tile,
+[data-theme="dark"] .todo-macro-stat-tile,
+.dark .todo-macro-stat-tile {
+  background-color: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.06);
+}
+
+[data-openui-theme="dark"] .todo-macro-explanation,
+.openui-agent-interface[data-theme="dark"] .todo-macro-explanation,
+[data-theme="dark"] .todo-macro-explanation,
+.dark .todo-macro-explanation {
+  background-color: rgba(16, 185, 129, 0.1);
+  color: #34d399;
+}

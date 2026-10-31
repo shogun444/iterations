@@ -1016,6 +1016,7 @@ const DEFAULT_MEAL_IMAGE =
 
 function MealCardView({
   props,
+  index = 0,
 }: ComponentRenderProps<{
   name?: string;
   protein?: string;
@@ -1024,9 +1025,10 @@ function MealCardView({
   imageUrl?: string;
   description?: string;
   note?: string;
-}>) {
+}> & { index?: number }) {
   const [imgSrc, setImgSrc] = useState(props?.imageUrl || DEFAULT_MEAL_IMAGE);
   const [imgFailed, setImgFailed] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     if (props?.imageUrl) {
@@ -1038,39 +1040,111 @@ function MealCardView({
   if (!props?.name) return null;
 
   return (
-    <div className="todo-editorial-card todo-meal-card">
-      <div className="todo-card-image-wrap">
-        <img
-          src={imgFailed ? DEFAULT_MEAL_IMAGE : imgSrc}
-          alt={props.name}
-          className="todo-card-image"
-          onError={() => setImgFailed(true)}
-          loading="lazy"
-        />
-        {props.tag && <span className="todo-card-tag">{props.tag}</span>}
-        {props.note && <span className="todo-card-hand-note">{props.note}</span>}
-      </div>
+    <>
+      <div
+        className="todo-hitting-meal-row"
+        onClick={() => setIsOpen(true)}
+        role="button"
+        tabIndex={0}
+      >
+        <div className="todo-hitting-meal-thumb-wrap">
+          <img
+            src={imgFailed ? DEFAULT_MEAL_IMAGE : imgSrc}
+            alt={props.name}
+            className="todo-hitting-meal-thumb"
+            onError={() => setImgFailed(true)}
+            loading="lazy"
+          />
+        </div>
 
-      <div className="todo-card-body">
-        <h4 className="todo-card-title">{props.name}</h4>
-
-        <div className="todo-card-pills">
-          {props.protein && (
-            <span className="todo-pill todo-pill--protein">
-              <span className="todo-pill-dot" />
-              {props.protein}
-            </span>
-          )}
-          {props.calories && (
-            <span className="todo-pill todo-pill--calories">{props.calories}</span>
+        <div className="todo-hitting-meal-info">
+          {props.tag && <span className="todo-hitting-meal-tag">{props.tag}</span>}
+          <h4 className="todo-hitting-meal-name">
+            <Marked text={props.name.includes("==") ? props.name : `==${props.name}==`} />
+          </h4>
+          {props.description && (
+            <p className="todo-hitting-meal-desc">{props.description}</p>
           )}
         </div>
 
-        {props.description && (
-          <p className="todo-card-description">{props.description}</p>
-        )}
+        <div className="todo-hitting-meal-stats">
+          {props.protein && (
+            <span className="todo-hitting-protein-badge">{props.protein}</span>
+          )}
+          {props.calories && (
+            <span className="todo-hitting-calories-badge">{props.calories}</span>
+          )}
+          {props.note && (
+            <span className="todo-hitting-hand-note">{props.note}</span>
+          )}
+        </div>
       </div>
-    </div>
+
+      {isOpen && (
+        <div className="todo-modal-overlay" onClick={() => setIsOpen(false)}>
+          <div
+            className="todo-modal-dialog"
+            onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+          >
+            <div className="todo-modal-image-wrap">
+              <img
+                src={imgFailed ? DEFAULT_MEAL_IMAGE : imgSrc}
+                alt={props.name}
+                className="todo-modal-image"
+              />
+              <button
+                type="button"
+                className="todo-modal-close-btn"
+                onClick={() => setIsOpen(false)}
+                aria-label="Close"
+              >
+                ✕
+              </button>
+              {props.tag && <span className="todo-card-tag">{props.tag}</span>}
+            </div>
+
+            <div className="todo-modal-body">
+              <h3 className="todo-modal-title">{props.name.replace(/==/g, "")}</h3>
+
+              <div className="todo-card-pills">
+                {props.protein && (
+                  <span className="todo-pill todo-pill--protein">
+                    <span className="todo-pill-dot" />
+                    {props.protein}
+                  </span>
+                )}
+                {props.calories && (
+                  <span className="todo-pill todo-pill--calories">
+                    {props.calories}
+                  </span>
+                )}
+                {props.note && (
+                  <span className="todo-modal-hand-aside">
+                    {props.note}
+                  </span>
+                )}
+              </div>
+
+              {props.description && (
+                <div className="todo-modal-section">
+                  <span className="todo-card-cue-label">Nutritional Breakdown & Benefits:</span>
+                  <p className="todo-modal-desc">{props.description}</p>
+                </div>
+              )}
+
+              <div className="todo-modal-tips">
+                <span className="todo-card-cue-label">Timing & Absorption:</span>
+                <p className="todo-modal-desc">
+                  Pair with 400–500ml water for digestive hydration. High leucine content activates the mTOR pathway to initiate cellular muscle protein synthesis within 45 minutes of consumption.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 
@@ -1079,6 +1153,7 @@ const DEFAULT_EXERCISE_IMAGE =
 
 function ExerciseCardView({
   props,
+  index = 0,
 }: ComponentRenderProps<{
   name?: string;
   setsReps?: string;
@@ -1086,9 +1161,10 @@ function ExerciseCardView({
   imageUrl?: string;
   cue?: string;
   note?: string;
-}>) {
+}> & { index?: number }) {
   const [imgSrc, setImgSrc] = useState(props?.imageUrl || DEFAULT_EXERCISE_IMAGE);
   const [imgFailed, setImgFailed] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     if (props?.imageUrl) {
@@ -1100,39 +1176,109 @@ function ExerciseCardView({
   if (!props?.name) return null;
 
   return (
-    <div className="todo-editorial-card todo-exercise-card">
-      <div className="todo-card-image-wrap">
-        <img
-          src={imgFailed ? DEFAULT_EXERCISE_IMAGE : imgSrc}
-          alt={props.name}
-          className="todo-card-image"
-          onError={() => setImgFailed(true)}
-          loading="lazy"
-        />
-        {props.muscle && <span className="todo-card-tag">{props.muscle}</span>}
-        {props.note && <span className="todo-card-hand-note">{props.note}</span>}
-      </div>
+    <>
+      <div
+        className="todo-kyoto-item"
+        onClick={() => setIsOpen(true)}
+        role="button"
+        tabIndex={0}
+      >
+        <span className="todo-kyoto-step-label">
+          {props.muscle ? props.muscle : `Movement ${index + 1}`}
+        </span>
 
-      <div className="todo-card-body">
-        <h4 className="todo-card-title">{props.name}</h4>
+        <div className="todo-kyoto-row">
+          <div className="todo-kyoto-thumb-wrap">
+            <img
+              src={imgFailed ? DEFAULT_EXERCISE_IMAGE : imgSrc}
+              alt={props.name}
+              className="todo-kyoto-thumb"
+              onError={() => setImgFailed(true)}
+              loading="lazy"
+            />
+          </div>
 
-        <div className="todo-card-pills">
-          {props.setsReps && (
-            <span className="todo-pill todo-pill--sets">
-              <span className="todo-pill-icon">⚡</span>
-              {props.setsReps}
-            </span>
+          <div className="todo-kyoto-content">
+            <h4 className="todo-kyoto-item-title">{props.name}</h4>
+            {props.setsReps && (
+              <span className="todo-kyoto-item-stats">
+                ⚡ {props.setsReps}
+              </span>
+            )}
+            {props.cue && (
+              <p className="todo-kyoto-item-cue">{props.cue}</p>
+            )}
+          </div>
+
+          {props.note && (
+            <span className="todo-kyoto-hand-tag">{props.note}</span>
           )}
         </div>
-
-        {props.cue && (
-          <div className="todo-card-cue-box">
-            <span className="todo-card-cue-label">Form cue:</span>
-            <p className="todo-card-description">{props.cue}</p>
-          </div>
-        )}
       </div>
-    </div>
+
+      {isOpen && (
+        <div className="todo-modal-overlay" onClick={() => setIsOpen(false)}>
+          <div
+            className="todo-modal-dialog"
+            onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+          >
+            <div className="todo-modal-image-wrap">
+              <img
+                src={imgFailed ? DEFAULT_EXERCISE_IMAGE : imgSrc}
+                alt={props.name}
+                className="todo-modal-image"
+              />
+              <button
+                type="button"
+                className="todo-modal-close-btn"
+                onClick={() => setIsOpen(false)}
+                aria-label="Close"
+              >
+                ✕
+              </button>
+              {props.muscle && <span className="todo-card-tag">{props.muscle}</span>}
+            </div>
+
+            <div className="todo-modal-body">
+              <h3 className="todo-modal-title">{props.name}</h3>
+
+              <div className="todo-card-pills">
+                {props.setsReps && (
+                  <span className="todo-pill todo-pill--sets">
+                    <span className="todo-pill-icon">⚡</span>
+                    {props.setsReps}
+                  </span>
+                )}
+                <span className="todo-pill todo-pill--calories">
+                  ⏱ 2–3 min rest
+                </span>
+                {props.note && (
+                  <span className="todo-modal-hand-aside">
+                    {props.note}
+                  </span>
+                )}
+              </div>
+
+              {props.cue && (
+                <div className="todo-modal-section">
+                  <span className="todo-card-cue-label">Form & Execution Technique:</span>
+                  <p className="todo-modal-desc">{props.cue}</p>
+                </div>
+              )}
+
+              <div className="todo-modal-tips">
+                <span className="todo-card-cue-label">Execution Strategy:</span>
+                <p className="todo-modal-desc">
+                  Take your working sets 1 to 2 reps shy of failure (RPE 8–9). Maintain a controlled 2-second eccentric lowering phase and explode smoothly on the concentric drive.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 
@@ -1150,60 +1296,73 @@ function MacroSummaryView({
 }>) {
   if (!props) return null;
 
+  // Compute realistic target range: 1.6g/kg (fitness/maintenance) to 2.2g/kg (pro/hypertrophy)
+  const weightStr = props.bodyWeight || "60 kg";
+  const num = parseFloat(weightStr.replace(/[^0-9.]/g, "")) || 60;
+  const isLbs = /lbs?|pounds?/i.test(weightStr);
+  const kg = isLbs ? num * 0.453592 : num;
+
+  const minProtein = Math.round(kg * 1.6);
+  const maxProtein = Math.round(kg * 2.2);
+
+  // If proteinTarget already includes a range or number, use it; otherwise provide the standard range
+  let targetDisplay = props.proteinTarget || `${minProtein}g – ${maxProtein}g / day`;
+  if (!targetDisplay.includes("–") && !targetDisplay.includes("-") && !targetDisplay.includes("to")) {
+    targetDisplay = `${minProtein}g – ${maxProtein}g / day`;
+  }
+
+  const formulaDisplay = props.formula || "1.6g – 2.2g per kg bodyweight";
+
   return (
     <div className="todo-macro-summary-panel">
       <div className="todo-macro-header">
         <div className="todo-macro-header-titles">
           <span className="todo-macro-badge">Nutrition & Protein Blueprint</span>
-          {props.bodyWeight && (
-            <span className="todo-macro-weight-chip">
-              Target for <strong>{props.bodyWeight}</strong> bodyweight
-            </span>
-          )}
+          <span className="todo-macro-weight-chip">
+            Target for <strong>{weightStr}</strong> bodyweight
+          </span>
         </div>
-        {props.note && <span className="todo-macro-hand-note">{props.note}</span>}
+        <span className="todo-macro-hand-note">{props.note || "hypertrophy sweet spot"}</span>
       </div>
 
       <div className="todo-macro-hero">
         <div className="todo-macro-hero-value">
-          <span className="todo-macro-num">{props.proteinTarget || "150g"}</span>
-          <span className="todo-macro-sub">Target Daily Protein</span>
+          <span className="todo-macro-num">{targetDisplay}</span>
+          <span className="todo-macro-sub">TARGET DAILY PROTEIN</span>
         </div>
-        {props.formula && (
-          <div className="todo-macro-formula-callout">
-            <span className="todo-macro-formula-icon">📐</span>
-            <span>{props.formula}</span>
-          </div>
-        )}
+        <div className="todo-macro-formula-callout">
+          <span className="todo-macro-formula-icon">📐</span>
+          <span>{formulaDisplay}</span>
+        </div>
       </div>
 
       <div className="todo-macro-stats-grid">
-        {props.calories && (
-          <div className="todo-macro-stat-tile">
-            <span className="todo-macro-stat-label">Daily Calories</span>
-            <span className="todo-macro-stat-val todo-macro-stat-val--amber">{props.calories}</span>
-          </div>
-        )}
-        {props.carbs && (
-          <div className="todo-macro-stat-tile">
-            <span className="todo-macro-stat-label">Carbs (Glycogen)</span>
-            <span className="todo-macro-stat-val todo-macro-stat-val--indigo">{props.carbs}</span>
-          </div>
-        )}
-        {props.fats && (
-          <div className="todo-macro-stat-tile">
-            <span className="todo-macro-stat-label">Healthy Fats</span>
-            <span className="todo-macro-stat-val todo-macro-stat-val--coral">{props.fats}</span>
-          </div>
-        )}
+        <div className="todo-macro-stat-tile">
+          <span className="todo-macro-stat-label">Daily Calories</span>
+          <span className="todo-macro-stat-val todo-macro-stat-val--amber">
+            {props.calories || `${Math.round(kg * 35)} kcal`}
+          </span>
+        </div>
+        <div className="todo-macro-stat-tile">
+          <span className="todo-macro-stat-label">Carbs (Glycogen)</span>
+          <span className="todo-macro-stat-val todo-macro-stat-val--indigo">
+            {props.carbs || `${Math.round(kg * 4)}g Carbs`}
+          </span>
+        </div>
+        <div className="todo-macro-stat-tile">
+          <span className="todo-macro-stat-label">Healthy Fats</span>
+          <span className="todo-macro-stat-val todo-macro-stat-val--coral">
+            {props.fats || `${Math.round(kg * 0.95)}g Healthy Fats`}
+          </span>
+        </div>
       </div>
 
-      {props.explanation && (
-        <div className="todo-macro-explanation">
-          <div className="todo-macro-explanation-indicator" />
-          <p>{props.explanation}</p>
-        </div>
-      )}
+      <div className="todo-macro-explanation">
+        <p>
+          {props.explanation ||
+            `Aim for 1.6g/kg (~${minProtein}g) for steady daily fitness & recovery. Elite lifters and athletes in progressive overload push to 2.0–2.2g/kg (~${maxProtein}g) to maximize muscle protein synthesis.`}
+        </p>
+      </div>
     </div>
   );
 }
@@ -1218,15 +1377,28 @@ function MealPlanView({
 }>) {
   const meals = list(props?.meals);
   return (
-    <div className="todo-cards-section todo-meal-plan-section">
-      <div className="todo-section-header">
-        <h3 className="todo-section-title">{props?.title || "Daily High-Protein Fuel"}</h3>
-        {props?.note && <span className="todo-section-hand-note">{props.note}</span>}
+    <div className="todo-hitting-mark-card">
+      <div className="todo-hitting-mark-header">
+        <h3 className="todo-hitting-mark-title">
+          <Marked text={props?.title || "Hitting the ==daily mark=="} />
+        </h3>
+        <p className="todo-hitting-mark-subtitle">
+          {props?.note || "spread across 3 to 4 balanced meals for sustained muscle protein synthesis"}
+        </p>
       </div>
-      <div className="todo-cards-grid">
-        {meals.map((node, i) => (
-          <Fragment key={i}>{renderNode(node) as React.ReactNode}</Fragment>
-        ))}
+
+      <div className="todo-hitting-mark-list">
+        {meals.map((node, i) => {
+          const mealProps = getBlockProps(node);
+          return (
+            <MealCardView
+              key={i}
+              props={mealProps}
+              renderNode={renderNode}
+              index={i}
+            />
+          );
+        })}
       </div>
     </div>
   );
@@ -1243,18 +1415,26 @@ function TrainingPlanView({
 }>) {
   const exercises = list(props?.exercises);
   return (
-    <div className="todo-cards-section todo-training-plan-section">
-      <div className="todo-section-header">
-        <div>
-          <h3 className="todo-section-title">{props?.title || "Training Program"}</h3>
-          {props?.focus && <span className="todo-section-subtitle">{props.focus}</span>}
-        </div>
-        {props?.note && <span className="todo-section-hand-note">{props.note}</span>}
+    <div className="todo-kyoto-card">
+      <div className="todo-kyoto-header">
+        <h3 className="todo-kyoto-title">{props?.title || "Push Day Hypertrophy Routine"}</h3>
+        <p className="todo-kyoto-hand-subtitle">
+          {props?.note || props?.focus || "arranged your compound and isolation lifts with optimal rest periods"}
+        </p>
       </div>
-      <div className="todo-cards-grid">
-        {exercises.map((node, i) => (
-          <Fragment key={i}>{renderNode(node) as React.ReactNode}</Fragment>
-        ))}
+
+      <div className="todo-kyoto-items">
+        {exercises.map((node, i) => {
+          const exProps = getBlockProps(node);
+          return (
+            <ExerciseCardView
+              key={i}
+              props={exProps}
+              renderNode={renderNode}
+              index={i}
+            />
+          );
+        })}
       </div>
     </div>
   );

@@ -101,23 +101,29 @@ function HeadlineHairpinUnderline({
   const textH = metrics.primaryH || metrics.containerH;
 
   // Hand-drawn folded hairpin underline matching user's reference:
-  // 1. Left edge aligns with the first letter '4' (xApex = 0).
+  // 1. Left edge aligns with the first letter (xApex = 0).
   // 2. Length terminates right past the primary text (e.g. right past 'PPL', leaving 'Split' un-underlined).
-  // 3. Fluid calligraphic inflection with subtle natural bow instead of being dead-straight.
+  // 3. Fluid hand-drawn calligraphic inflection with natural sag on bottom line and gentle wave on top line.
   const pathD = useMemo(() => {
     if (primaryW <= 0 || textH <= 0) return "";
     const xRightTop = primaryW + 4;
-    const xRightBottom = Math.max(primaryW - 24, primaryW * 0.82);
+    const xRightBottom = Math.max(primaryW - 28, primaryW * 0.86);
 
-    const yTop = textH + 2;
-    const gap = 5.2;
+    const yTop = textH + 3.2;
+    const gap = 5.6;
     const yBottom = yTop + gap;
+    const yMid = (yTop + yBottom) / 2;
+
+    const sag = Math.min(3.4, Math.max(2.2, primaryW * 0.009));
+    const lift = Math.min(2.0, Math.max(1.2, primaryW * 0.005));
 
     return [
-      `M ${xRightBottom.toFixed(1)},${(yBottom + 0.6).toFixed(1)}`,
-      `C ${(primaryW * 0.6).toFixed(1)},${(yBottom + 1.2).toFixed(1)} ${(primaryW * 0.25).toFixed(1)},${(yBottom - 0.2).toFixed(1)} 8.0,${yBottom.toFixed(1)}`,
-      `C 0.0,${(yBottom + 0.8).toFixed(1)} 0.0,${(yTop - 0.8).toFixed(1)} 8.0,${yTop.toFixed(1)}`,
-      `C ${(primaryW * 0.4).toFixed(1)},${(yTop + 1.2).toFixed(1)} ${(primaryW * 0.75).toFixed(1)},${(yTop - 0.6).toFixed(1)} ${xRightTop.toFixed(1)},${(yTop - 0.8).toFixed(1)}`,
+      `M ${xRightBottom.toFixed(1)},${(yBottom - 0.6).toFixed(1)}`,
+      `C ${(primaryW * 0.74).toFixed(1)},${(yBottom + sag * 0.6).toFixed(1)} ${(primaryW * 0.52).toFixed(1)},${(yBottom + sag).toFixed(1)} ${(primaryW * 0.36).toFixed(1)},${(yBottom + sag * 0.9).toFixed(1)}`,
+      `C ${(primaryW * 0.18).toFixed(1)},${(yBottom + sag * 0.5).toFixed(1)} 14.0,${(yBottom + 0.8).toFixed(1)} 5.0,${(yBottom - 0.4).toFixed(1)}`,
+      `C -1.2,${(yMid + 2.0).toFixed(1)} -1.2,${(yMid - 2.0).toFixed(1)} 5.5,${(yTop + 0.4).toFixed(1)}`,
+      `C 16.0,${(yTop - lift * 0.4).toFixed(1)} ${(primaryW * 0.25).toFixed(1)},${(yTop - lift).toFixed(1)} ${(primaryW * 0.48).toFixed(1)},${(yTop - lift).toFixed(1)}`,
+      `C ${(primaryW * 0.72).toFixed(1)},${(yTop - lift * 0.5).toFixed(1)} ${(primaryW * 0.92).toFixed(1)},${(yTop + 0.2).toFixed(1)} ${xRightTop.toFixed(1)},${(yTop + 0.3).toFixed(1)}`,
     ].join(" ");
   }, [primaryW, textH]);
 
@@ -186,9 +192,9 @@ function DailyHeadlineView({ props }: ComponentRenderProps<{ text?: string }>) {
     trailingText = explicitMatch[2].trim();
   } else {
     const stripped = cleanedText.replace(/==([^=]+)==/g, "$1").replace(/_([^_]+)_/g, "$1").trim();
-    // Match common suffix category words (Split, Day, Board, Plan, Routine, Session, Deadlines, Checklist, Overview)
+    // Match common suffix category words (Split, Day, Board, Plan, Routine, Session, Deadlines, Checklist, Overview, Blueprint, Schedule, Diet)
     const suffixMatch = stripped.match(
-      /^(.*?)\s+(Split|Day|Board|Plan|Routine|Session|Deadlines|Checklist|Overview)$/i
+      /^(.*?)\s+(Split|Day|Board|Plan|Routine|Session|Deadlines|Checklist|Overview|Blueprint|Schedule|Diet)$/i
     );
     if (suffixMatch) {
       primaryText = suffixMatch[1].trim();

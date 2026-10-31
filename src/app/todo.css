@@ -112,7 +112,7 @@ body,
   display: inline-block;
   width: fit-content;
   max-width: 100%;
-  padding: 0 0 16px 0;
+  padding: 0 4px 16px 2px;
   box-sizing: border-box;
 }
 

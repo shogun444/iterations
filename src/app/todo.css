@@ -1798,27 +1798,14 @@ body,
   gap: 12px;
 }
 
-.todo-macro-badge {
-  font-family: var(--font-inter), "Inter", sans-serif !important;
-  font-size: 12px;
-  font-weight: 600;
-  text-transform: none !important;
-  letter-spacing: normal !important;
-  color: #047857;
-  background-color: #ecfdf5;
-  border: 1px solid rgba(16, 185, 129, 0.3);
-  padding: 4px 12px;
-  border-radius: 9999px;
-}
-
-.todo-macro-weight-chip {
-  font-family: var(--font-inter), "Inter", sans-serif !important;
-  font-size: 13.5px;
-  color: var(--todo-ink-secondary);
-}
-
-.todo-macro-weight-chip strong {
+.todo-macro-bw-hand-note {
+  font-family: var(--font-hand-var), "Reenie Beanie", cursive !important;
+  font-size: 28px;
+  font-weight: 700;
   color: var(--todo-ink);
+  letter-spacing: 0.02em;
+  transform: rotate(-1.5deg);
+  display: inline-block;
 }
 
 .todo-macro-hand-note {
@@ -1882,26 +1869,22 @@ body,
   letter-spacing: normal !important;
 }
 
-.todo-macro-formula-callout {
+.todo-macro-formula-hand-note {
+  font-family: var(--font-hand-var), "Reenie Beanie", cursive !important;
+  font-size: 26px;
+  font-weight: 700;
+  color: #2563eb; /* rich blue as requested */
+  letter-spacing: 0.01em;
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-family: var(--font-inter), "Inter", sans-serif !important;
-  font-size: 13px;
-  font-weight: 600;
-  color: #4338ca;
-  background-color: #eef2ff;
-  border: 1px solid rgba(99, 102, 241, 0.2);
-  padding: 6px 14px;
-  border-radius: 9999px;
 }
 
 .todo-macro-hand-explanation-box {
-  background-color: #f0fdf4;
-  border: 1px solid rgba(16, 185, 129, 0.25);
-  border-radius: 18px;
-  padding: 14px 20px;
-  margin-top: 4px;
+  background: transparent !important;
+  border: none !important;
+  padding: 4px 0 0;
+  margin-top: 2px;
 }
 
 .todo-macro-hand-explanation-text {
@@ -1909,7 +1892,7 @@ body,
   font-family: var(--font-hand-var), "Reenie Beanie", cursive !important;
   font-size: 26px;
   line-height: 1.25;
-  color: #065f46;
+  color: #047857;
   letter-spacing: 0.01em;
 }
 

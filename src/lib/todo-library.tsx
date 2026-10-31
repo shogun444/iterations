@@ -1355,6 +1355,7 @@ function MacroSummaryView({
   }
 
   const formulaDisplay = props.formula || "1.6g – 2.2g per kg bodyweight";
+  const cleanWeight = weightStr.replace(/bodyweight/i, "").trim();
   const explanationText =
     props.explanation ||
     `Aim for 1.6g/kg (~${minProtein}g) for steady daily fitness & recovery. 2.2g/kg (~${maxProtein}g) is for competitive athletes and pros during heavy progressive overload.`;
@@ -1362,12 +1363,7 @@ function MacroSummaryView({
   return (
     <div className="todo-macro-summary-panel">
       <div className="todo-macro-header">
-        <div className="todo-macro-header-titles">
-          <span className="todo-macro-badge">Nutrition & protein blueprint</span>
-          <span className="todo-macro-weight-chip">
-            Target for <strong>{weightStr}</strong> bodyweight
-          </span>
-        </div>
+        <span className="todo-macro-bw-hand-note">BW - {cleanWeight}</span>
         <span className="todo-macro-hand-note">{props.note || "hypertrophy sweet spot"}</span>
       </div>
 
@@ -1393,10 +1389,7 @@ function MacroSummaryView({
           </div>
           <span className="todo-macro-sub">Target daily protein</span>
         </div>
-        <div className="todo-macro-formula-callout">
-          <span className="todo-macro-formula-icon">📐</span>
-          <span>{formulaDisplay}</span>
-        </div>
+        <span className="todo-macro-formula-hand-note">📐 {formulaDisplay}</span>
       </div>
 
       <div className="todo-macro-hand-explanation-box">

@@ -1011,8 +1011,30 @@ function FollowUpsView({ props, renderNode }: ComponentRenderProps<{ options?: u
   );
 }
 
-const DEFAULT_MEAL_IMAGE =
-  "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&auto=format&fit=crop&q=80";
+const MEAL_IMAGE_PRESETS: { keywords: RegExp; url: string }[] = [
+  { keywords: /egg|toast|omelet|scramble|frittata|breakfast/i, url: "https://images.unsplash.com/photo-1525351484163-7529414344d8?w=800&auto=format&fit=crop&q=80" },
+  { keywords: /chicken|rice|quinoa|bowl|turkey|breast|lunch/i, url: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&auto=format&fit=crop&q=80" },
+  { keywords: /yogurt|berry|berries|parfait|casein|cottage|snack|midday/i, url: "https://images.unsplash.com/photo-1488477181946-6428a0291777?w=800&auto=format&fit=crop&q=80" },
+  { keywords: /salmon|fish|trout|tuna|poke|seafood|dinner/i, url: "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=800&auto=format&fit=crop&q=80" },
+  { keywords: /steak|beef|meat|sirloin|ribeye/i, url: "https://images.unsplash.com/photo-1544025162-d76694265947?w=800&auto=format&fit=crop&q=80" },
+  { keywords: /oats|oatmeal|smoothie|shake|protein shake/i, url: "https://images.unsplash.com/photo-1553530666-ba11a7da3888?w=800&auto=format&fit=crop&q=80" },
+];
+
+const DEFAULT_MEAL_IMAGES = [
+  "https://images.unsplash.com/photo-1525351484163-7529414344d8?w=800&auto=format&fit=crop&q=80",
+  "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&auto=format&fit=crop&q=80",
+  "https://images.unsplash.com/photo-1488477181946-6428a0291777?w=800&auto=format&fit=crop&q=80",
+  "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=800&auto=format&fit=crop&q=80",
+];
+
+function resolveMealImage(name?: string, tag?: string, customUrl?: string, index: number = 0): string {
+  if (customUrl && customUrl.startsWith("http") && customUrl.length > 15) return customUrl;
+  const text = `${name || ""} ${tag || ""}`;
+  for (const preset of MEAL_IMAGE_PRESETS) {
+    if (preset.keywords.test(text)) return preset.url;
+  }
+  return DEFAULT_MEAL_IMAGES[index % DEFAULT_MEAL_IMAGES.length];
+}
 
 function MealCardView({
   props,
@@ -1026,56 +1048,61 @@ function MealCardView({
   description?: string;
   note?: string;
 }> & { index?: number }) {
-  const [imgSrc, setImgSrc] = useState(props?.imageUrl || DEFAULT_MEAL_IMAGE);
+  const resolved = useMemo(
+    () => resolveMealImage(props?.name, props?.tag, props?.imageUrl, index),
+    [props?.name, props?.tag, props?.imageUrl, index]
+  );
+  const [imgSrc, setImgSrc] = useState(resolved);
   const [imgFailed, setImgFailed] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    if (props?.imageUrl) {
-      setImgSrc(props.imageUrl);
-      setImgFailed(false);
-    }
-  }, [props?.imageUrl]);
+    setImgSrc(resolved);
+    setImgFailed(false);
+  }, [resolved]);
 
   if (!props?.name) return null;
 
   return (
     <>
       <div
-        className="todo-hitting-meal-row"
+        className="todo-kyoto-deck-card"
         onClick={() => setIsOpen(true)}
         role="button"
         tabIndex={0}
       >
-        <div className="todo-hitting-meal-thumb-wrap">
+        <div className="todo-deck-card-image-wrap">
           <img
-            src={imgFailed ? DEFAULT_MEAL_IMAGE : imgSrc}
+            src={imgFailed ? DEFAULT_MEAL_IMAGES[index % DEFAULT_MEAL_IMAGES.length] : imgSrc}
             alt={props.name}
-            className="todo-hitting-meal-thumb"
+            className="todo-deck-card-image"
             onError={() => setImgFailed(true)}
             loading="lazy"
           />
+          {props.tag && <span className="todo-card-tag">{props.tag}</span>}
+          {props.note && <span className="todo-card-hand-note">{props.note}</span>}
         </div>
 
-        <div className="todo-hitting-meal-info">
-          {props.tag && <span className="todo-hitting-meal-tag">{props.tag}</span>}
-          <h4 className="todo-hitting-meal-name">
-            <Marked text={props.name.includes("==") ? props.name : `==${props.name}==`} />
+        <div className="todo-deck-card-content">
+          <h4 className="todo-deck-card-title">
+            <Marked text={props.name} />
           </h4>
-          {props.description && (
-            <p className="todo-hitting-meal-desc">{props.description}</p>
-          )}
-        </div>
 
-        <div className="todo-hitting-meal-stats">
-          {props.protein && (
-            <span className="todo-hitting-protein-badge">{props.protein}</span>
-          )}
-          {props.calories && (
-            <span className="todo-hitting-calories-badge">{props.calories}</span>
-          )}
-          {props.note && (
-            <span className="todo-hitting-hand-note">{props.note}</span>
+          <div className="todo-deck-meta-row">
+            {props.protein && (
+              <span className="todo-deck-protein-tag">
+                {props.protein}
+              </span>
+            )}
+            {props.calories && (
+              <span className="todo-deck-cal-tag">
+                {props.calories}
+              </span>
+            )}
+          </div>
+
+          {props.description && (
+            <p className="todo-deck-card-desc">{props.description}</p>
           )}
         </div>
       </div>
@@ -1090,7 +1117,7 @@ function MealCardView({
           >
             <div className="todo-modal-image-wrap">
               <img
-                src={imgFailed ? DEFAULT_MEAL_IMAGE : imgSrc}
+                src={imgFailed ? DEFAULT_MEAL_IMAGES[index % DEFAULT_MEAL_IMAGES.length] : imgSrc}
                 alt={props.name}
                 className="todo-modal-image"
               />
@@ -1129,13 +1156,13 @@ function MealCardView({
 
               {props.description && (
                 <div className="todo-modal-section">
-                  <span className="todo-card-cue-label">Nutritional Breakdown & Benefits:</span>
+                  <span className="todo-card-cue-label">Nutritional breakdown & benefits</span>
                   <p className="todo-modal-desc">{props.description}</p>
                 </div>
               )}
 
               <div className="todo-modal-tips">
-                <span className="todo-card-cue-label">Timing & Absorption:</span>
+                <span className="todo-card-cue-label">Timing & absorption</span>
                 <p className="todo-modal-desc">
                   Pair with 400–500ml water for digestive hydration. High leucine content activates the mTOR pathway to initiate cellular muscle protein synthesis within 45 minutes of consumption.
                 </p>
@@ -1148,8 +1175,34 @@ function MealCardView({
   );
 }
 
-const DEFAULT_EXERCISE_IMAGE =
-  "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=800&auto=format&fit=crop&q=80";
+const EXERCISE_IMAGE_PRESETS: { keywords: RegExp; url: string }[] = [
+  { keywords: /bench|chest|pec|push-up|fly/i, url: "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=800&auto=format&fit=crop&q=80" },
+  { keywords: /overhead|military|shoulder|press/i, url: "https://images.unsplash.com/photo-1532029837206-abbe2b7620e3?w=800&auto=format&fit=crop&q=80" },
+  { keywords: /incline|dumbbell press/i, url: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=800&auto=format&fit=crop&q=80" },
+  { keywords: /lateral|raise|delt/i, url: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=800&auto=format&fit=crop&q=80" },
+  { keywords: /tricep|pushdown|dip|skull|extension/i, url: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&auto=format&fit=crop&q=80" },
+  { keywords: /row|back|lat|pull-up|pulldown|chin/i, url: "https://images.unsplash.com/photo-1605296867304-46d5465a13f1?w=800&auto=format&fit=crop&q=80" },
+  { keywords: /bicep|curl|hammer/i, url: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=800&auto=format&fit=crop&q=80" },
+  { keywords: /squat|quad|leg|lunge/i, url: "https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=800&auto=format&fit=crop&q=80" },
+  { keywords: /deadlift|rdl|hamstring|hip/i, url: "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=800&auto=format&fit=crop&q=80" },
+];
+
+const DEFAULT_EXERCISE_IMAGES = [
+  "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=800&auto=format&fit=crop&q=80",
+  "https://images.unsplash.com/photo-1532029837206-abbe2b7620e3?w=800&auto=format&fit=crop&q=80",
+  "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=800&auto=format&fit=crop&q=80",
+  "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=800&auto=format&fit=crop&q=80",
+  "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&auto=format&fit=crop&q=80",
+];
+
+function resolveExerciseImage(name?: string, muscle?: string, customUrl?: string, index: number = 0): string {
+  if (customUrl && customUrl.startsWith("http") && customUrl.length > 15) return customUrl;
+  const text = `${name || ""} ${muscle || ""}`;
+  for (const preset of EXERCISE_IMAGE_PRESETS) {
+    if (preset.keywords.test(text)) return preset.url;
+  }
+  return DEFAULT_EXERCISE_IMAGES[index % DEFAULT_EXERCISE_IMAGES.length];
+}
 
 function ExerciseCardView({
   props,
@@ -1162,56 +1215,50 @@ function ExerciseCardView({
   cue?: string;
   note?: string;
 }> & { index?: number }) {
-  const [imgSrc, setImgSrc] = useState(props?.imageUrl || DEFAULT_EXERCISE_IMAGE);
+  const resolved = useMemo(
+    () => resolveExerciseImage(props?.name, props?.muscle, props?.imageUrl, index),
+    [props?.name, props?.muscle, props?.imageUrl, index]
+  );
+  const [imgSrc, setImgSrc] = useState(resolved);
   const [imgFailed, setImgFailed] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    if (props?.imageUrl) {
-      setImgSrc(props.imageUrl);
-      setImgFailed(false);
-    }
-  }, [props?.imageUrl]);
+    setImgSrc(resolved);
+    setImgFailed(false);
+  }, [resolved]);
 
   if (!props?.name) return null;
 
   return (
     <>
       <div
-        className="todo-kyoto-item"
+        className="todo-kyoto-deck-card"
         onClick={() => setIsOpen(true)}
         role="button"
         tabIndex={0}
       >
-        <span className="todo-kyoto-step-label">
-          {props.muscle ? props.muscle : `Movement ${index + 1}`}
-        </span>
+        <div className="todo-deck-card-image-wrap">
+          <img
+            src={imgFailed ? DEFAULT_EXERCISE_IMAGES[index % DEFAULT_EXERCISE_IMAGES.length] : imgSrc}
+            alt={props.name}
+            className="todo-deck-card-image"
+            onError={() => setImgFailed(true)}
+            loading="lazy"
+          />
+          {props.muscle && <span className="todo-card-tag">{props.muscle}</span>}
+          {props.note && <span className="todo-card-hand-note">{props.note}</span>}
+        </div>
 
-        <div className="todo-kyoto-row">
-          <div className="todo-kyoto-thumb-wrap">
-            <img
-              src={imgFailed ? DEFAULT_EXERCISE_IMAGE : imgSrc}
-              alt={props.name}
-              className="todo-kyoto-thumb"
-              onError={() => setImgFailed(true)}
-              loading="lazy"
-            />
-          </div>
-
-          <div className="todo-kyoto-content">
-            <h4 className="todo-kyoto-item-title">{props.name}</h4>
-            {props.setsReps && (
-              <span className="todo-kyoto-item-stats">
-                ⚡ {props.setsReps}
-              </span>
-            )}
-            {props.cue && (
-              <p className="todo-kyoto-item-cue">{props.cue}</p>
-            )}
-          </div>
-
-          {props.note && (
-            <span className="todo-kyoto-hand-tag">{props.note}</span>
+        <div className="todo-deck-card-content">
+          <h4 className="todo-deck-card-title">{props.name}</h4>
+          {props.setsReps && (
+            <span className="todo-deck-card-subtitle">
+              ⚡ {props.setsReps}
+            </span>
+          )}
+          {props.cue && (
+            <p className="todo-deck-card-desc">{props.cue}</p>
           )}
         </div>
       </div>
@@ -1226,7 +1273,7 @@ function ExerciseCardView({
           >
             <div className="todo-modal-image-wrap">
               <img
-                src={imgFailed ? DEFAULT_EXERCISE_IMAGE : imgSrc}
+                src={imgFailed ? DEFAULT_EXERCISE_IMAGES[index % DEFAULT_EXERCISE_IMAGES.length] : imgSrc}
                 alt={props.name}
                 className="todo-modal-image"
               />
@@ -1263,15 +1310,15 @@ function ExerciseCardView({
 
               {props.cue && (
                 <div className="todo-modal-section">
-                  <span className="todo-card-cue-label">Form & Execution Technique:</span>
+                  <span className="todo-card-cue-label">Form & execution technique</span>
                   <p className="todo-modal-desc">{props.cue}</p>
                 </div>
               )}
 
               <div className="todo-modal-tips">
-                <span className="todo-card-cue-label">Execution Strategy:</span>
+                <span className="todo-card-cue-label">Rest & recovery strategy</span>
                 <p className="todo-modal-desc">
-                  Take your working sets 1 to 2 reps shy of failure (RPE 8–9). Maintain a controlled 2-second eccentric lowering phase and explode smoothly on the concentric drive.
+                  Take compound sets to RPE 8–9 (1 to 2 reps in reserve). Rest 2–3 minutes to replenish ATP-CP energy stores before the next heavy working set.
                 </p>
               </div>
             </div>
@@ -1377,17 +1424,17 @@ function MealPlanView({
 }>) {
   const meals = list(props?.meals);
   return (
-    <div className="todo-hitting-mark-card">
-      <div className="todo-hitting-mark-header">
-        <h3 className="todo-hitting-mark-title">
+    <div className="todo-editorial-deck-section">
+      <div className="todo-deck-header">
+        <h3 className="todo-deck-title">
           <Marked text={props?.title || "Hitting the ==daily mark=="} />
         </h3>
-        <p className="todo-hitting-mark-subtitle">
+        <p className="todo-deck-hand-subtitle todo-deck-hand-subtitle--green">
           {props?.note || "spread across 3 to 4 balanced meals for sustained muscle protein synthesis"}
         </p>
       </div>
 
-      <div className="todo-hitting-mark-list">
+      <div className="todo-editorial-card-grid">
         {meals.map((node, i) => {
           const mealProps = getBlockProps(node);
           return (
@@ -1415,15 +1462,15 @@ function TrainingPlanView({
 }>) {
   const exercises = list(props?.exercises);
   return (
-    <div className="todo-kyoto-card">
-      <div className="todo-kyoto-header">
-        <h3 className="todo-kyoto-title">{props?.title || "Push Day Hypertrophy Routine"}</h3>
-        <p className="todo-kyoto-hand-subtitle">
-          {props?.note || props?.focus || "arranged your compound and isolation lifts with optimal rest periods"}
+    <div className="todo-editorial-deck-section">
+      <div className="todo-deck-header">
+        <h3 className="todo-deck-title">{props?.title || "Push Day Hypertrophy Routine"}</h3>
+        <p className="todo-deck-hand-subtitle">
+          {props?.note || props?.focus || "arranged with optimal rest periods"}
         </p>
       </div>
 
-      <div className="todo-kyoto-items">
+      <div className="todo-editorial-card-grid">
         {exercises.map((node, i) => {
           const exProps = getBlockProps(node);
           return (

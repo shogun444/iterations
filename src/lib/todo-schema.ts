@@ -95,6 +95,7 @@ export function buildTodoLibrary(views: Views) {
     "DailyHeadline",
     z.object({
       text: z.string().describe("The editorial headline, 3 to 10 words. May mark with ==highlight== or _underline_"),
+      color: z.string().optional().describe("Optional headline text and underline color, e.g. 'rgb(254, 240, 138)' or 'yellow'"),
     }),
     "A grand editorial headline that opens the board.",
   );

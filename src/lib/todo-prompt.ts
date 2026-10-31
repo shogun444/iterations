@@ -6,7 +6,7 @@ export const todoPromptOptions = {
     "- Nutrition & daily meal plans: A daily meal plan is NEVER 1 meal. You MUST ALWAYS generate 4 MealCards in MealPlan: Breakfast (m1), Lunch (m2), Midday Snack (m3), and Dinner (m4). Anyone eating in a day has breakfast, lunch, snack, and dinner. Outputting only 1 meal is strictly forbidden. Each MealCard must have: dish name, protein (e.g. '24g protein'), calories (e.g. '420 kcal'), meal tag ('Breakfast', 'Post-Workout Lunch', 'Midday Snack', 'Recovery Dinner'), imageUrl (pass \"\" for automatic preset image), nutritional benefits description, and handwritten note.",
     "NO TASK CARDS: NEVER generate TaskCards or TaskCard. Tasks must be presented in TaskList with TaskItem, and scheduled with TodoCalendar.",
     "Brevity and completeness are essential: keep string arguments punchy and concise so the program completes fully without hitting token limits.",
-    "DailyHeadline takes exactly ONE string argument representing the core focus or impact, e.g. DailyHeadline(\"4-Day PPL Split\") or DailyHeadline(\"Push Hypertrophy Routine\") or DailyHeadline(\"60kg Nutrition Blueprint\"). Headlines must be short, punchy, and concise (strictly 3 to 4 words maximum). Never generate long, wordy headlines. Never prepend dates or weekdays.",
+    "DailyHeadline takes text and an optional color argument (e.g. DailyHeadline(\"4-Day PPL Split\") or DailyHeadline(\"Push Hypertrophy Routine\", \"rgb(254, 240, 138)\") or DailyHeadline(\"60kg Nutrition Blueprint\", \"rgb(254, 240, 138)\") or with ==highlight== markup). Headlines must be short, punchy, and concise (strictly 3 to 4 words maximum). When colored, both the text and its hairpin underline match identically in that color. Never prepend dates or weekdays.",
     "Quote rules: every string must start and end with exactly one double quote. Never write trailing double-double quotes.",
     "Use markings on keywords: ==highlight== for key phrases, _underline_ for primary deadlines, and ((circle)) for counts or critical metrics.",
     "WORKOUT SPLITS & MULTI-DAY SCHEDULES: When the user asks for a workout split or gym schedule, generate DailyHeadline(\"4-Day PPL Split\"), FocusPull, and TaskList with: Day 1: Push (Chest & Triceps) due=\"Today\", Day 2: Pull (Back & Biceps) due=\"Tomorrow\", Day 3: Legs (Squats & Calves) due=\"Nov 1\", Day 4: Rest Day (Active Recovery) due=\"Nov 2\". Include all scheduled dates in TodoCalendar's markedDates array so each day is circled with its single word (Push, Pull, Legs, Rest) on the calendar.",
@@ -36,7 +36,7 @@ d4 = TaskItem("d4", "Rest Day: Active Recovery", false, "not priority", "Nov 2")
 cal = TodoCalendar("Schedule & Deadlines", "2026-10-30", ["2026-10-30", "2026-10-31", "2026-11-01", "2026-11-02"])
 f = FollowUps([Option("View Push exercises"), Option("Protein & meal plan")])`,
     `root = TodoBoard([h, p, train, f])
-h = DailyHeadline("Push Hypertrophy Routine")
+h = DailyHeadline("Push Hypertrophy Routine", "rgb(254, 240, 138)")
 p = FocusPull("Progressive overload across chest, anterior delts, and triceps.", "compound power")
 train = TrainingPlan("Push Hypertrophy Routine", "Chest, Shoulders & Triceps", [ex1, ex2, ex3, ex4, ex5], "arranged with optimal rest periods")
 ex1 = ExerciseCard("Barbell Flat Bench Press", "3–4 sets · 6–8 reps · 2–3 min rest", "Chest & Triceps", "", "Retract scapulae, touch lower sternum with control, and explode upward.", "heavy compound")
@@ -46,7 +46,7 @@ ex4 = ExerciseCard("Dumbbell Lateral Raises", "3 sets · 12–15 reps · 60 sec 
 ex5 = ExerciseCard("Cable Rope Triceps Pushdowns", "3 sets · 10–12 reps · 60 sec rest", "Triceps Lockout", "", "Pin elbows to ribs, spread the rope apart at full lockout.", "peak contraction")
 f = FollowUps([Option("Push day meals"), Option("Next day: Pull workout")])`,
     `root = TodoBoard([h, macro, meals, f])
-h = DailyHeadline("60kg Nutrition Blueprint")
+h = DailyHeadline("60kg Nutrition Blueprint", "rgb(254, 240, 138)")
 macro = MacroSummary("60 kg", "96g – 132g Protein / day", "1.6g – 2.2g per kg bodyweight", "2,100 kcal", "240g Carbs", "58g Healthy Fats", "Aim for 1.6g/kg (~100g) for steady daily fitness & recovery. 2.2g/kg (~132g) is for competitive athletes and pros during heavy progressive overload.", "hypertrophy sweet spot")
 meals = MealPlan("Hitting the ==daily mark==", [m1, m2, m3, m4], "aim for 1.6 to 2.2g/kg across balanced meals")
 m1 = MealCard("Breakfast: three eggs and toast", "24g protein", "420 kcal", "Breakfast", "", "Whole egg complete bioavailable protein with complex carbohydrate fuel.", "energy boost")

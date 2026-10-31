@@ -62,9 +62,11 @@ export function Marked({
 function HeadlineHairpinUnderline({
   primaryText,
   trailingText,
+  color,
 }: {
   primaryText: string;
   trailingText?: string;
+  color?: string;
 }) {
   const containerRef = useRef<HTMLSpanElement>(null);
   const primaryRef = useRef<HTMLSpanElement>(null);
@@ -127,8 +129,17 @@ function HeadlineHairpinUnderline({
     ].join(" ");
   }, [primaryW, textH]);
 
+  const wrapStyle = color
+    ? ({ color, "--todo-headline-color": color } as React.CSSProperties)
+    : undefined;
+
   return (
-    <span ref={containerRef} className="todo-headline-underline-wrap">
+    <span
+      ref={containerRef}
+      className="todo-headline-underline-wrap"
+      style={wrapStyle}
+      data-colored={color ? "true" : undefined}
+    >
       <span className="todo-headline-text">
         <span ref={primaryRef} className="todo-headline-primary">
           {primaryText}
@@ -144,6 +155,7 @@ function HeadlineHairpinUnderline({
         <svg
           className="todo-headline-underline-svg"
           aria-hidden="true"
+          data-colored={color ? "true" : undefined}
           style={{
             position: "absolute",
             top: 0,
@@ -153,6 +165,7 @@ function HeadlineHairpinUnderline({
             overflow: "visible",
             pointerEvents: "none",
             zIndex: 0,
+            color: "inherit",
           }}
         >
           <path
@@ -169,10 +182,15 @@ function HeadlineHairpinUnderline({
   );
 }
 
-function DailyHeadlineView({ props }: ComponentRenderProps<{ text?: string }>) {
+function DailyHeadlineView({
+  props,
+}: ComponentRenderProps<{ text?: string; color?: string }>) {
   if (!props?.text) return null;
+  const rawText = props.text;
+  const isMarkedYellow = /^==.+==$/.test(rawText.trim()) || /==/.test(rawText);
+
   // Remove leading date/day name e.g. "Thursday, Oct 24 — " or "Tuesday, Oct 29 — "
-  let cleanedText = props.text.replace(
+  let cleanedText = rawText.replace(
     /^(?:[A-Za-z]+,\s+)?[A-Za-z]+\s+\d+(?:st|nd|rd|th)?(?:\s*,\s*\d{4})?\s*[-—–:]\s*/i,
     ""
   );
@@ -205,9 +223,32 @@ function DailyHeadlineView({ props }: ComponentRenderProps<{ text?: string }>) {
     }
   }
 
+  // Resolve color: if props.color is provided, or if marked with ==...==
+  let resolvedColor: string | undefined = undefined;
+  if (props.color) {
+    resolvedColor =
+      props.color === "yellow" || props.color === "gold"
+        ? "rgb(254, 240, 138)"
+        : props.color;
+  } else if (isMarkedYellow) {
+    resolvedColor = "rgb(254, 240, 138)";
+  }
+
+  const headlineStyle = resolvedColor
+    ? ({ color: resolvedColor, "--todo-headline-color": resolvedColor } as React.CSSProperties)
+    : undefined;
+
   return (
-    <h1 className="todo-headline">
-      <HeadlineHairpinUnderline primaryText={primaryText} trailingText={trailingText} />
+    <h1
+      className="todo-headline"
+      style={headlineStyle}
+      data-colored={resolvedColor ? "true" : undefined}
+    >
+      <HeadlineHairpinUnderline
+        primaryText={primaryText}
+        trailingText={trailingText}
+        color={resolvedColor}
+      />
     </h1>
   );
 }

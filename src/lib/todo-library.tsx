@@ -187,7 +187,6 @@ function DailyHeadlineView({
 }: ComponentRenderProps<{ text?: string; color?: string }>) {
   if (!props?.text) return null;
   const rawText = props.text;
-  const isMarkedYellow = /^==.+==$/.test(rawText.trim()) || /==/.test(rawText);
 
   // Remove leading date/day name e.g. "Thursday, Oct 24 — " or "Tuesday, Oct 29 — "
   let cleanedText = rawText.replace(
@@ -223,16 +222,12 @@ function DailyHeadlineView({
     }
   }
 
-  // Resolve color: if props.color is provided, or if marked with ==...==
-  let resolvedColor: string | undefined = undefined;
-  if (props.color) {
-    resolvedColor =
-      props.color === "yellow" || props.color === "gold"
-        ? "rgb(254, 240, 138)"
-        : props.color;
-  } else if (isMarkedYellow) {
-    resolvedColor = "rgb(254, 240, 138)";
-  }
+  // Keep headline and underline neutral by default (only color if explicitly requested)
+  const resolvedColor: string | undefined = props.color
+    ? props.color === "yellow" || props.color === "gold"
+      ? "rgb(254, 240, 138)"
+      : props.color
+    : undefined;
 
   const headlineStyle = resolvedColor
     ? ({ color: resolvedColor, "--todo-headline-color": resolvedColor } as React.CSSProperties)
